@@ -36,7 +36,6 @@
     position: relative; z-index: 1;
   }
 
-  /* Header */
   .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
   .day-name {
     font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.1;
@@ -48,11 +47,26 @@
   .time { font-size: 28px; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: -.5px; }
   .progress-info { font-size: 16px; font-weight: 500; color: #FF8A3D; margin-top: 6px; }
 
-  /* Progress bar */
+  .date-nav { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .date-nav-btn {
+    background: rgba(255,255,255,.06); border: none; color: rgba(255,255,255,.5);
+    width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s; font-family: inherit;
+  }
+  .date-nav-btn:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .today-btn {
+    background: none; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.4);
+    padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .today-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
+  .today-btn.hidden { display: none; }
+
   .progress-track {
     width: 100%; height: 3px; background: rgba(255,255,255,.06);
-    border-radius: 2px; margin-bottom: 48px; overflow: hidden;
-    display: none;
+    border-radius: 2px; margin-bottom: 48px; overflow: hidden; display: none;
   }
   .progress-track.visible { display: block; }
   .progress-fill {
@@ -61,7 +75,11 @@
     border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1);
   }
 
-  /* Empty state */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px 0; color: rgba(255,255,255,.2); font-size: 18px;
+  }
+
   .empty {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; padding: 120px 0; gap: 16px;
@@ -73,14 +91,12 @@
   }
   .empty-text { font-size: 20px; color: rgba(255,255,255,.2); font-weight: 500; }
 
-  /* Section label */
   .section-label {
     font-size: 13px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 4px;
     margin-top: 20px; padding-left: 4px;
   }
 
-  /* Todo list */
   .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
 
   .todo-item {
@@ -93,18 +109,12 @@
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
   .todo-item.dragging {
-    opacity: .85;
-    background: rgba(255,138,61,.08);
-    transform: scale(1.02);
-    z-index: 10;
+    opacity: .85; background: rgba(255,138,61,.08);
+    transform: scale(1.02); z-index: 10;
     box-shadow: 0 8px 32px rgba(0,0,0,.4);
   }
-  .todo-item.drag-over-above {
-    box-shadow: 0 -2px 0 0 #FF8A3D;
-  }
-  .todo-item.drag-over-below {
-    box-shadow: 0 2px 0 0 #FF8A3D;
-  }
+  .todo-item.drag-over-above { box-shadow: 0 -2px 0 0 #FF8A3D; }
+  .todo-item.drag-over-below { box-shadow: 0 2px 0 0 #FF8A3D; }
 
   .drag-handle {
     display: flex; flex-direction: column; gap: 3px;
@@ -113,10 +123,7 @@
   }
   .drag-handle:hover { opacity: .5; }
   .drag-handle:active { cursor: grabbing; }
-  .drag-handle span {
-    display: block; width: 14px; height: 2px;
-    background: #fff; border-radius: 1px;
-  }
+  .drag-handle span { display: block; width: 14px; height: 2px; background: #fff; border-radius: 1px; }
 
   .checkbox {
     width: 34px; height: 34px; min-width: 34px; border-radius: 10px;
@@ -124,16 +131,12 @@
     align-items: center; justify-content: center; transition: all .2s;
   }
   .todo-item.done .checkbox {
-    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
-    border-color: transparent;
+    background: linear-gradient(135deg, #FF8A3D, #FF6B1A); border-color: transparent;
   }
   .checkbox svg { display: none; }
   .todo-item.done .checkbox svg { display: block; }
 
-  .todo-text {
-    font-size: 24px; font-weight: 500; flex: 1;
-    letter-spacing: -.3px; line-height: 1.4;
-  }
+  .todo-text { font-size: 24px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
   .remove-btn {
@@ -143,9 +146,7 @@
   }
   .remove-btn:hover { opacity: 1; }
 
-  /* Input */
   .input-area { display: flex; gap: 16px; align-items: center; }
-  .input-area.hidden { display: none; }
 
   .input-area input {
     flex: 1; padding: 22px 28px; font-size: 22px; font-weight: 500;
@@ -187,6 +188,11 @@
     <div>
       <div class="day-name" id="dayName"></div>
       <div class="date-sub" id="dateSub"></div>
+      <div class="date-nav">
+        <button class="date-nav-btn" id="prevDay">&larr;</button>
+        <button class="date-nav-btn" id="nextDay">&rarr;</button>
+        <button class="today-btn hidden" id="todayBtn">Today</button>
+      </div>
     </div>
     <div class="time-block">
       <div class="time" id="clock"></div>
@@ -200,7 +206,7 @@
 
   <div class="list" id="list"></div>
 
-  <div class="input-area hidden" id="inputArea">
+  <div class="input-area" id="inputArea">
     <input type="text" id="todoInput" placeholder="Add a task...">
     <button class="add-btn" id="addBtn">Add</button>
   </div>
@@ -208,238 +214,320 @@
   <button class="clear-btn" id="clearBtn">Clear completed</button>
 </div>
 
-<script>
-const STORAGE_KEY = 'tv-todos';
-const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
+  import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, writeBatch } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
 
-let todos = [];
-let dragSrcRealIndex = null;
+  // ============================================================
+  // CONFIG — Replace with your Firebase project values
+  // Go to: console.firebase.google.com > Project Settings > General
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyDAWnQSN96g-zVpaeAZbaaw4btvCmGSRTs",
+    authDomain: "tv-todos.firebaseapp.com",
+    projectId: "tv-todos",
+    storageBucket: "tv-todos.firebasestorage.app",
+    messagingSenderId: "566644863130",
+    appId: "1:566644863130:web:dacb2e5e7699c0a2e9af23"
+  };
+  // ============================================================
 
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const todosCol = collection(db, 'tv_todos');
 
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed.dateKey === todayKey()) {
-        todos = parsed.todos || [];
-      } else {
-        todos = [];
-        save();
-      }
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  let todos = [];
+  let currentDate = new Date();
+  let dragSrcId = null;
+  let loading = false;
+
+  function dkey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function todayKey() { return dkey(new Date()); }
+  function isToday() { return dkey(currentDate) === todayKey(); }
+
+  // ---- Firebase CRUD ----
+
+  async function loadTodos() {
+    loading = true;
+    render();
+    try {
+      const q = query(todosCol, where('date', '==', dkey(currentDate)), orderBy('position'));
+      const snap = await getDocs(q);
+      todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.error('Load error:', e);
+      todos = [];
     }
-  } catch { todos = []; }
-}
-
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ dateKey: todayKey(), todos }));
-}
-
-function updateClock() {
-  const now = new Date();
-  document.getElementById('dayName').textContent = DAYS[now.getDay()];
-  document.getElementById('dateSub').textContent = `${MONTHS[now.getMonth()]} ${now.getDate()}`;
-  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-}
-
-function getPending() { return todos.filter(t => !t.done); }
-function getDone() { return todos.filter(t => t.done); }
-
-function render() {
-  const list = document.getElementById('list');
-  const inputArea = document.getElementById('inputArea');
-  const progressTrack = document.getElementById('progressTrack');
-  const progressFill = document.getElementById('progressFill');
-  const progressInfo = document.getElementById('progressInfo');
-  const clearBtn = document.getElementById('clearBtn');
-
-  const doneCount = getDone().length;
-  const total = todos.length;
-
-  if (total > 0) {
-    progressTrack.classList.add('visible');
-    progressFill.style.width = `${(doneCount / total) * 100}%`;
-    progressInfo.textContent = `${doneCount}/${total} done`;
-  } else {
-    progressTrack.classList.remove('visible');
-    progressInfo.textContent = '';
-  }
-
-  if (doneCount > 0) clearBtn.classList.add('visible');
-  else clearBtn.classList.remove('visible');
-
-  list.innerHTML = '';
-
-  if (total === 0) {
-    inputArea.classList.remove('hidden');
-    list.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">+</div>
-        <div class="empty-text">No tasks yet</div>
-      </div>`;
-    return;
-  }
-
-  inputArea.classList.remove('hidden');
-
-  const pending = getPending();
-  const done = getDone();
-
-  pending.forEach(todo => {
-    list.appendChild(buildItem(todo));
-  });
-
-  if (done.length > 0) {
-    const label = document.createElement('div');
-    label.className = 'section-label';
-    label.textContent = 'Completed';
-    list.appendChild(label);
-    done.forEach(todo => {
-      list.appendChild(buildItem(todo));
-    });
-  }
-}
-
-function buildItem(todo) {
-  const realIndex = todos.indexOf(todo);
-  const el = document.createElement('div');
-  el.className = 'todo-item' + (todo.done ? ' done' : '');
-  el.dataset.realIndex = realIndex;
-
-  // Only pending items are draggable
-  if (!todo.done) el.draggable = true;
-
-  el.innerHTML = `
-    <div class="drag-handle" ${todo.done ? 'style="opacity:0;pointer-events:none"' : ''}>
-      <span></span><span></span><span></span>
-    </div>
-    <div class="checkbox">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#050507" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-    </div>
-    <span class="todo-text">${escHtml(todo.text)}</span>
-    <button class="remove-btn">&times;</button>`;
-
-  // Toggle
-  el.addEventListener('click', (e) => {
-    if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')) return;
-    const ri = todos.indexOf(todo);
-    todos[ri].done = !todos[ri].done;
-    save();
+    loading = false;
     render();
-  });
+  }
 
-  // Remove
-  el.querySelector('.remove-btn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const ri = todos.indexOf(todo);
-    todos.splice(ri, 1);
-    save();
+  async function addTodoItem(text) {
+    const maxPos = todos.length > 0 ? Math.max(...todos.map(t => t.position)) + 1 : 0;
+    try {
+      const ref = await addDoc(todosCol, {
+        text,
+        done: false,
+        date: dkey(currentDate),
+        position: maxPos,
+        createdAt: new Date().toISOString()
+      });
+      todos.push({ id: ref.id, text, done: false, date: dkey(currentDate), position: maxPos });
+      render();
+    } catch (e) { console.error('Add error:', e); }
+  }
+
+  async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    todo.done = !todo.done;
     render();
-  });
+    try {
+      await updateDoc(doc(db, 'tv_todos', id), { done: todo.done });
+    } catch (e) { console.error('Toggle error:', e); }
+  }
 
-  // Drag & drop (pending only)
-  if (!todo.done) {
-    el.addEventListener('dragstart', (e) => {
-      dragSrcRealIndex = todos.indexOf(todo);
-      el.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
+  async function removeTodo(id) {
+    todos = todos.filter(t => t.id !== id);
+    render();
+    try {
+      await deleteDoc(doc(db, 'tv_todos', id));
+    } catch (e) { console.error('Remove error:', e); }
+  }
+
+  async function clearCompleted() {
+    const done = todos.filter(t => t.done);
+    todos = todos.filter(t => !t.done);
+    render();
+    try {
+      const batch = writeBatch(db);
+      done.forEach(t => batch.delete(doc(db, 'tv_todos', t.id)));
+      await batch.commit();
+    } catch (e) { console.error('Clear error:', e); }
+  }
+
+  async function savePositions() {
+    try {
+      const batch = writeBatch(db);
+      todos.forEach((t, i) => {
+        batch.update(doc(db, 'tv_todos', t.id), { position: i });
+      });
+      await batch.commit();
+    } catch (e) { console.error('Position error:', e); }
+  }
+
+  // ---- Date nav ----
+
+  function shiftDate(days) {
+    currentDate = new Date(currentDate);
+    currentDate.setDate(currentDate.getDate() + days);
+    updateHeader();
+    loadTodos();
+  }
+
+  function goToday() {
+    currentDate = new Date();
+    updateHeader();
+    loadTodos();
+  }
+
+  // ---- Header / Clock ----
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+
+  function updateHeader() {
+    const d = currentDate;
+    document.getElementById('dayName').textContent = DAYS[d.getDay()];
+    document.getElementById('dateSub').textContent = `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+    const todayBtn = document.getElementById('todayBtn');
+    if (isToday()) todayBtn.classList.add('hidden');
+    else todayBtn.classList.remove('hidden');
+  }
+
+  // ---- Render ----
+
+  function render() {
+    const list = document.getElementById('list');
+    const progressTrack = document.getElementById('progressTrack');
+    const progressFill = document.getElementById('progressFill');
+    const progressInfo = document.getElementById('progressInfo');
+    const clearBtn = document.getElementById('clearBtn');
+
+    if (loading) {
+      list.innerHTML = '<div class="loading">Loading...</div>';
+      progressTrack.classList.remove('visible');
+      progressInfo.textContent = '';
+      clearBtn.classList.remove('visible');
+      return;
+    }
+
+    const doneCount = todos.filter(t => t.done).length;
+    const total = todos.length;
+
+    if (total > 0) {
+      progressTrack.classList.add('visible');
+      progressFill.style.width = `${(doneCount / total) * 100}%`;
+      progressInfo.textContent = `${doneCount}/${total} done`;
+    } else {
+      progressTrack.classList.remove('visible');
+      progressInfo.textContent = '';
+    }
+
+    clearBtn.classList.toggle('visible', doneCount > 0);
+    list.innerHTML = '';
+
+    if (total === 0) {
+      list.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">+</div>
+          <div class="empty-text">No tasks yet</div>
+        </div>`;
+      return;
+    }
+
+    const pending = todos.filter(t => !t.done);
+    const done = todos.filter(t => t.done);
+
+    pending.forEach(todo => list.appendChild(buildItem(todo)));
+
+    if (done.length > 0) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = 'Completed';
+      list.appendChild(label);
+      done.forEach(todo => list.appendChild(buildItem(todo)));
+    }
+  }
+
+  function buildItem(todo) {
+    const el = document.createElement('div');
+    el.className = 'todo-item' + (todo.done ? ' done' : '');
+    el.dataset.id = todo.id;
+    if (!todo.done) el.draggable = true;
+
+    el.innerHTML = `
+      <div class="drag-handle" ${todo.done ? 'style="opacity:0;pointer-events:none"' : ''}>
+        <span></span><span></span><span></span>
+      </div>
+      <div class="checkbox">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#050507" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <span class="todo-text">${escHtml(todo.text)}</span>
+      <button class="remove-btn">&times;</button>`;
+
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')) return;
+      toggleTodo(todo.id);
     });
 
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      dragSrcRealIndex = null;
-      clearAllDragStyles();
+    el.querySelector('.remove-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeTodo(todo.id);
     });
 
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      clearAllDragStyles();
-      const rect = el.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height / 2) {
-        el.classList.add('drag-over-above');
-      } else {
-        el.classList.add('drag-over-below');
-      }
-    });
+    if (!todo.done) {
+      el.addEventListener('dragstart', (e) => {
+        dragSrcId = todo.id;
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
 
-    el.addEventListener('dragleave', () => {
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        dragSrcId = null;
+        clearDragStyles();
+      });
+
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        clearDragStyles();
+        const rect = el.getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) {
+          el.classList.add('drag-over-above');
+        } else {
+          el.classList.add('drag-over-below');
+        }
+      });
+
+      el.addEventListener('dragleave', () => {
+        el.classList.remove('drag-over-above', 'drag-over-below');
+      });
+
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        clearDragStyles();
+        if (!dragSrcId || dragSrcId === todo.id) return;
+
+        const srcIdx = todos.findIndex(t => t.id === dragSrcId);
+        const tgtIdx = todos.findIndex(t => t.id === todo.id);
+        if (srcIdx === -1 || tgtIdx === -1) return;
+
+        const [item] = todos.splice(srcIdx, 1);
+        let insertAt = todos.findIndex(t => t.id === todo.id);
+        if (insertAt === -1) insertAt = todos.length;
+
+        const rect = el.getBoundingClientRect();
+        if (e.clientY >= rect.top + rect.height / 2) insertAt++;
+
+        todos.splice(insertAt, 0, item);
+        todos.forEach((t, i) => t.position = i);
+        dragSrcId = null;
+        render();
+        savePositions();
+      });
+    }
+
+    return el;
+  }
+
+  function clearDragStyles() {
+    document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el => {
       el.classList.remove('drag-over-above', 'drag-over-below');
     });
-
-    el.addEventListener('drop', (e) => {
-      e.preventDefault();
-      clearAllDragStyles();
-      if (dragSrcRealIndex === null) return;
-
-      const targetRealIndex = todos.indexOf(todo);
-      if (dragSrcRealIndex === targetRealIndex) return;
-
-      // Pull item out
-      const [item] = todos.splice(dragSrcRealIndex, 1);
-
-      // Recalculate target position after removal
-      let insertAt = todos.indexOf(todo);
-      if (insertAt === -1) insertAt = todos.length;
-
-      const rect = el.getBoundingClientRect();
-      if (e.clientY >= rect.top + rect.height / 2) insertAt++;
-
-      todos.splice(insertAt, 0, item);
-      dragSrcRealIndex = null;
-      save();
-      render();
-    });
   }
 
-  return el;
-}
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
 
-function clearAllDragStyles() {
-  document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el => {
-    el.classList.remove('drag-over-above', 'drag-over-below');
+  function handleAdd() {
+    const input = document.getElementById('todoInput');
+    const text = input.value.trim();
+    if (!text) return;
+    addTodoItem(text);
+    input.value = '';
+    input.focus();
+  }
+
+  // ---- Init ----
+
+  updateClock();
+  updateHeader();
+  loadTodos();
+  setInterval(updateClock, 60000);
+
+  document.getElementById('addBtn').addEventListener('click', handleAdd);
+  document.getElementById('todoInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleAdd();
   });
-}
-
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-function addTodo() {
-  const input = document.getElementById('todoInput');
-  const text = input.value.trim();
-  if (!text) return;
-  todos.push({ id: Date.now().toString(), text, done: false });
-  input.value = '';
-  input.focus();
-  save();
-  render();
-}
-
-// Init
-load();
-updateClock();
-render();
-setInterval(updateClock, 60000);
-
-document.getElementById('addBtn').addEventListener('click', addTodo);
-document.getElementById('todoInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') addTodo();
-});
-document.getElementById('clearBtn').addEventListener('click', () => {
-  todos = todos.filter(t => !t.done);
-  save();
-  render();
-});
+  document.getElementById('clearBtn').addEventListener('click', clearCompleted);
+  document.getElementById('prevDay').addEventListener('click', () => shiftDate(-1));
+  document.getElementById('nextDay').addEventListener('click', () => shiftDate(1));
+  document.getElementById('todayBtn').addEventListener('click', goToday);
 </script>
 
 </body>
