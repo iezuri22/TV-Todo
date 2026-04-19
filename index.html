@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #050507;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  .glow-tr {
+    position: fixed; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,138,61,.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .glow-bl {
+    position: fixed; bottom: -300px; left: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,26,.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 64px 48px;
+    position: relative; z-index: 1;
+  }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+  .day-name {
+    font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.7) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .date-sub { font-size: 22px; font-weight: 500; color: rgba(255,255,255,.35); margin-top: 8px; letter-spacing: 1px; }
+  .time-block { text-align: right; }
+  .time { font-size: 28px; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: -.5px; }
+  .progress-info { font-size: 16px; font-weight: 500; color: #FF8A3D; margin-top: 6px; }
+
+  /* Progress bar */
+  .progress-track {
+    width: 100%; height: 3px; background: rgba(255,255,255,.06);
+    border-radius: 2px; margin-bottom: 48px; overflow: hidden;
+    display: none;
+  }
+  .progress-track.visible { display: block; }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #FF8A3D, #FF6B1A);
+    border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Empty state */
+  .empty {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 120px 0; gap: 16px;
+  }
+  .empty-icon {
+    font-size: 48px; font-weight: 200; color: rgba(255,255,255,.1);
+    width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 2px solid rgba(255,255,255,.06);
+  }
+  .empty-text { font-size: 20px; color: rgba(255,255,255,.2); font-weight: 500; }
+  .empty-btn {
+    margin-top: 16px; padding: 16px 32px; font-size: 18px; font-weight: 600;
+    color: rgba(255,255,255,.6); background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 16px;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .empty-btn:hover { background: rgba(255,138,61,.15); border-color: #FF8A3D; }
+
+  /* Todo list */
+  .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
+
+  .todo-item {
+    display: flex; align-items: center; gap: 20px;
+    padding: 22px 28px; background: rgba(255,255,255,.03);
+    border-radius: 16px; cursor: pointer; transition: all .2s;
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  }
+  .todo-item:hover { background: rgba(255,255,255,.06); }
+  .todo-item.done { opacity: .45; }
+
+  .checkbox {
+    width: 34px; height: 34px; min-width: 34px; border-radius: 10px;
+    border: 2px solid rgba(255,255,255,.2); display: flex;
+    align-items: center; justify-content: center; transition: all .2s;
+  }
+  .todo-item.done .checkbox {
+    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    border-color: transparent;
+  }
+  .checkbox svg { display: none; }
+  .todo-item.done .checkbox svg { display: block; }
+
+  .todo-text {
+    font-size: 24px; font-weight: 500; flex: 1;
+    letter-spacing: -.3px; line-height: 1.4;
+  }
+  .todo-item.done .todo-text { text-decoration: line-through; }
+
+  .remove-btn {
+    background: none; border: none; color: #fff; font-size: 28px;
+    cursor: pointer; opacity: .15; transition: opacity .2s;
+    padding: 4px 8px; font-family: inherit;
+  }
+  .remove-btn:hover { opacity: 1; }
+
+  /* Input */
+  .input-area { display: flex; gap: 16px; align-items: center; }
+  .input-area.hidden { display: none; }
+
+  .input-area input {
+    flex: 1; padding: 22px 28px; font-size: 22px; font-weight: 500;
+    color: #fff; background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 16px;
+    outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    transition: border-color .2s;
+  }
+  .input-area input:focus { border-color: rgba(255,138,61,.3); }
+  .input-area input::placeholder { color: rgba(255,255,255,.2); }
+
+  .add-btn {
+    padding: 22px 40px; font-size: 20px; font-weight: 700;
+    color: #050507; background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    border: none; border-radius: 16px; cursor: pointer;
+    transition: all .2s; font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -.3px;
+  }
+  .add-btn:hover { background: linear-gradient(135deg, #FF9B57, #FF8A3D); }
+
+  .clear-btn {
+    margin-top: 24px; background: none; border: none;
+    color: rgba(255,255,255,.3); font-size: 16px; font-weight: 500;
+    cursor: pointer; padding: 8px 0; transition: color .2s; font-family: inherit;
+    display: none;
+  }
+  .clear-btn.visible { display: inline-block; }
+  .clear-btn:hover { color: #FF8A3D; }
+</style>
+</head>
+<body>
+
+<div class="glow-tr"></div>
+<div class="glow-bl"></div>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="day-name" id="dayName"></div>
+      <div class="date-sub" id="dateSub"></div>
+    </div>
+    <div class="time-block">
+      <div class="time" id="clock"></div>
+      <div class="progress-info" id="progressInfo"></div>
+    </div>
+  </div>
+
+  <div class="progress-track" id="progressTrack">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="input-area hidden" id="inputArea">
+    <input type="text" id="todoInput" placeholder="Add a task...">
+    <button class="add-btn" id="addBtn">Add</button>
+  </div>
+
+  <button class="clear-btn" id="clearBtn">Clear completed</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'tv-todos';
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+let todos = [];
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.dateKey === todayKey()) {
+        todos = parsed.todos || [];
+      } else {
+        todos = [];
+        save();
+      }
+    }
+  } catch { todos = []; }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ dateKey: todayKey(), todos }));
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('dayName').textContent = DAYS[now.getDay()];
+  document.getElementById('dateSub').textContent = `${MONTHS[now.getMonth()]} ${now.getDate()}`;
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+function render() {
+  const list = document.getElementById('list');
+  const inputArea = document.getElementById('inputArea');
+  const progressTrack = document.getElementById('progressTrack');
+  const progressFill = document.getElementById('progressFill');
+  const progressInfo = document.getElementById('progressInfo');
+  const clearBtn = document.getElementById('clearBtn');
+
+  const done = todos.filter(t => t.done).length;
+  const total = todos.length;
+
+  // Progress
+  if (total > 0) {
+    progressTrack.classList.add('visible');
+    progressFill.style.width = `${(done / total) * 100}%`;
+    progressInfo.textContent = `${done}/${total} done`;
+  } else {
+    progressTrack.classList.remove('visible');
+    progressInfo.textContent = '';
+  }
+
+  // Clear btn
+  if (done > 0) clearBtn.classList.add('visible');
+  else clearBtn.classList.remove('visible');
+
+  // List
+  list.innerHTML = '';
+
+  if (total === 0) {
+    inputArea.classList.remove('hidden');
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">+</div>
+        <div class="empty-text">No tasks yet</div>
+      </div>`;
+    return;
+  }
+
+  inputArea.classList.remove('hidden');
+
+  todos.forEach((todo, i) => {
+    const el = document.createElement('div');
+    el.className = 'todo-item' + (todo.done ? ' done' : '');
+    el.innerHTML = `
+      <div class="checkbox">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#050507" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <span class="todo-text">${escHtml(todo.text)}</span>
+      <button class="remove-btn" data-i="${i}">×</button>`;
+    el.addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove-btn')) return;
+      todos[i].done = !todos[i].done;
+      save();
+      render();
+    });
+    el.querySelector('.remove-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      todos.splice(i, 1);
+      save();
+      render();
+    });
+    list.appendChild(el);
+  });
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now().toString(), text, done: false });
+  input.value = '';
+  input.focus();
+  save();
+  render();
+}
+
+// Init
+load();
+updateClock();
+render();
+setInterval(updateClock, 60000);
+
+document.getElementById('addBtn').addEventListener('click', addTodo);
+document.getElementById('todoInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') addTodo();
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  todos = todos.filter(t => !t.done);
+  save();
+  render();
+});
+</script>
+
+</body>
+</html>
