@@ -9,11 +9,11 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    min-height: 100vh;
+    height: 100vh;
     background: #050507;
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     color: #fff;
-    overflow-x: hidden;
+    overflow: hidden;
   }
 
   .glow-tr {
@@ -29,25 +29,32 @@
     pointer-events: none;
   }
 
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 64px 48px;
-    position: relative; z-index: 1;
+  /* Layout */
+  .layout {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
   }
 
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    padding: 64px 40px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,.04);
+  }
+
   .day-name {
-    font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.1;
+    font-size: 48px; font-weight: 800; letter-spacing: -2px; line-height: 1.1;
     background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.7) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .date-sub { font-size: 22px; font-weight: 500; color: rgba(255,255,255,.35); margin-top: 8px; letter-spacing: 1px; }
-  .time-block { text-align: right; }
-  .time { font-size: 28px; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: -.5px; }
-  .progress-info { font-size: 16px; font-weight: 500; color: #FF8A3D; margin-top: 6px; }
+  .date-sub { font-size: 20px; font-weight: 500; color: rgba(255,255,255,.35); margin-top: 8px; letter-spacing: 1px; }
 
-  .date-nav { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .date-nav { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
   .date-nav-btn {
     background: rgba(255,255,255,.06); border: none; color: rgba(255,255,255,.5);
     width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
@@ -57,16 +64,25 @@
   .date-nav-btn:hover { background: rgba(255,255,255,.1); color: #fff; }
   .today-btn {
     background: none; border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.4);
-    padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
     cursor: pointer; transition: all .2s; font-family: inherit;
     text-transform: uppercase; letter-spacing: 1px;
   }
   .today-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
   .today-btn.hidden { display: none; }
 
+  .sidebar-spacer { flex: 1; }
+
+  .time {
+    font-size: 32px; font-weight: 700; color: rgba(255,255,255,.4);
+    letter-spacing: -1px;
+  }
+
+  .progress-section { margin-top: 24px; }
+  .progress-info { font-size: 15px; font-weight: 600; color: #FF8A3D; margin-bottom: 10px; }
   .progress-track {
-    width: 100%; height: 3px; background: rgba(255,255,255,.06);
-    border-radius: 2px; margin-bottom: 48px; overflow: hidden; display: none;
+    width: 100%; height: 4px; background: rgba(255,255,255,.06);
+    border-radius: 2px; overflow: hidden; display: none;
   }
   .progress-track.visible { display: block; }
   .progress-fill {
@@ -75,6 +91,37 @@
     border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1);
   }
 
+  .clear-btn {
+    margin-top: 24px; background: none; border: none;
+    color: rgba(255,255,255,.25); font-size: 14px; font-weight: 500;
+    cursor: pointer; padding: 0; transition: color .2s; font-family: inherit;
+    display: none; text-align: left;
+  }
+  .clear-btn.visible { display: inline-block; }
+  .clear-btn:hover { color: #FF8A3D; }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 48px 48px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .list::-webkit-scrollbar { width: 6px; }
+  .list::-webkit-scrollbar-track { background: transparent; }
+  .list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 3px; }
+  .list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
+
   .loading {
     display: flex; align-items: center; justify-content: center;
     padding: 80px 0; color: rgba(255,255,255,.2); font-size: 18px;
@@ -82,7 +129,7 @@
 
   .empty {
     display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 120px 0; gap: 16px;
+    justify-content: center; flex: 1; gap: 16px;
   }
   .empty-icon {
     font-size: 48px; font-weight: 200; color: rgba(255,255,255,.1);
@@ -93,18 +140,16 @@
 
   .section-label {
     font-size: 13px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 4px;
-    margin-top: 20px; padding-left: 4px;
+    letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 2px;
+    margin-top: 16px; padding-left: 4px;
   }
-
-  .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
 
   .todo-item {
     display: flex; align-items: center; gap: 16px;
-    padding: 22px 28px; background: rgba(255,255,255,.03);
+    padding: 20px 24px; background: rgba(255,255,255,.03);
     border-radius: 16px; cursor: pointer; transition: background .2s, opacity .2s, transform .15s;
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
-    user-select: none; position: relative;
+    user-select: none; position: relative; flex-shrink: 0;
   }
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
@@ -126,7 +171,7 @@
   .drag-handle span { display: block; width: 14px; height: 2px; background: #fff; border-radius: 1px; }
 
   .checkbox {
-    width: 34px; height: 34px; min-width: 34px; border-radius: 10px;
+    width: 32px; height: 32px; min-width: 32px; border-radius: 10px;
     border: 2px solid rgba(255,255,255,.2); display: flex;
     align-items: center; justify-content: center; transition: all .2s;
   }
@@ -136,22 +181,27 @@
   .checkbox svg { display: none; }
   .todo-item.done .checkbox svg { display: block; }
 
-  .todo-text { font-size: 24px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
+  .todo-text { font-size: 22px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
   .remove-btn {
-    background: none; border: none; color: #fff; font-size: 28px;
+    background: none; border: none; color: #fff; font-size: 26px;
     cursor: pointer; opacity: .15; transition: opacity .2s;
     padding: 4px 8px; font-family: inherit;
   }
   .remove-btn:hover { opacity: 1; }
 
-  .input-area { display: flex; gap: 16px; align-items: center; }
+  /* Input pinned to bottom */
+  .input-area {
+    display: flex; gap: 14px; align-items: center;
+    padding: 20px 48px 40px;
+    background: linear-gradient(to top, #050507 60%, transparent);
+  }
 
   .input-area input {
-    flex: 1; padding: 22px 28px; font-size: 22px; font-weight: 500;
+    flex: 1; padding: 20px 24px; font-size: 20px; font-weight: 500;
     color: #fff; background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08); border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08); border-radius: 14px;
     outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
     transition: border-color .2s;
@@ -160,22 +210,13 @@
   .input-area input::placeholder { color: rgba(255,255,255,.2); }
 
   .add-btn {
-    padding: 22px 40px; font-size: 20px; font-weight: 700;
+    padding: 20px 36px; font-size: 18px; font-weight: 700;
     color: #050507; background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
-    border: none; border-radius: 16px; cursor: pointer;
+    border: none; border-radius: 14px; cursor: pointer;
     transition: all .2s; font-family: 'Plus Jakarta Sans', sans-serif;
     letter-spacing: -.3px;
   }
   .add-btn:hover { background: linear-gradient(135deg, #FF9B57, #FF8A3D); }
-
-  .clear-btn {
-    margin-top: 24px; background: none; border: none;
-    color: rgba(255,255,255,.3); font-size: 16px; font-weight: 500;
-    cursor: pointer; padding: 8px 0; transition: color .2s; font-family: inherit;
-    display: none;
-  }
-  .clear-btn.visible { display: inline-block; }
-  .clear-btn:hover { color: #FF8A3D; }
 </style>
 </head>
 <body>
@@ -183,35 +224,37 @@
 <div class="glow-tr"></div>
 <div class="glow-bl"></div>
 
-<div class="container">
-  <div class="header">
-    <div>
-      <div class="day-name" id="dayName"></div>
-      <div class="date-sub" id="dateSub"></div>
-      <div class="date-nav">
-        <button class="date-nav-btn" id="prevDay">&larr;</button>
-        <button class="date-nav-btn" id="nextDay">&rarr;</button>
-        <button class="today-btn hidden" id="todayBtn">Today</button>
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="day-name" id="dayName"></div>
+    <div class="date-sub" id="dateSub"></div>
+    <div class="date-nav">
+      <button class="date-nav-btn" id="prevDay">&larr;</button>
+      <button class="date-nav-btn" id="nextDay">&rarr;</button>
+      <button class="today-btn hidden" id="todayBtn">Today</button>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="time" id="clock"></div>
+    <div class="progress-section">
+      <div class="progress-info" id="progressInfo"></div>
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
     </div>
-    <div class="time-block">
-      <div class="time" id="clock"></div>
-      <div class="progress-info" id="progressInfo"></div>
+    <button class="clear-btn" id="clearBtn">Clear completed</button>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="list" id="list"></div>
+    <div class="input-area" id="inputArea">
+      <input type="text" id="todoInput" placeholder="Add a task...">
+      <button class="add-btn" id="addBtn">Add</button>
     </div>
   </div>
-
-  <div class="progress-track" id="progressTrack">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-
-  <div class="list" id="list"></div>
-
-  <div class="input-area" id="inputArea">
-    <input type="text" id="todoInput" placeholder="Add a task...">
-    <button class="add-btn" id="addBtn">Add</button>
-  </div>
-
-  <button class="clear-btn" id="clearBtn">Clear completed</button>
 </div>
 
 <!-- Firebase -->
@@ -219,10 +262,6 @@
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
   import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, writeBatch } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
 
-  // ============================================================
-  // CONFIG — Replace with your Firebase project values
-  // Go to: console.firebase.google.com > Project Settings > General
-  // ============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyDAWnQSN96g-zVpaeAZbaaw4btvCmGSRTs",
     authDomain: "tv-todos.firebaseapp.com",
@@ -231,7 +270,6 @@
     messagingSenderId: "566644863130",
     appId: "1:566644863130:web:dacb2e5e7699c0a2e9af23"
   };
-  // ============================================================
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
@@ -250,8 +288,6 @@
   }
   function todayKey() { return dkey(new Date()); }
   function isToday() { return dkey(currentDate) === todayKey(); }
-
-  // ---- Firebase CRUD ----
 
   async function loadTodos() {
     loading = true;
@@ -322,8 +358,6 @@
     } catch (e) { console.error('Position error:', e); }
   }
 
-  // ---- Date nav ----
-
   function shiftDate(days) {
     currentDate = new Date(currentDate);
     currentDate.setDate(currentDate.getDate() + days);
@@ -336,8 +370,6 @@
     updateHeader();
     loadTodos();
   }
-
-  // ---- Header / Clock ----
 
   function updateClock() {
     const now = new Date();
@@ -352,8 +384,6 @@
     if (isToday()) todayBtn.classList.add('hidden');
     else todayBtn.classList.remove('hidden');
   }
-
-  // ---- Render ----
 
   function render() {
     const list = document.getElementById('list');
@@ -512,8 +542,6 @@
     input.value = '';
     input.focus();
   }
-
-  // ---- Init ----
 
   updateClock();
   updateHeader();
