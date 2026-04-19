@@ -29,30 +29,20 @@
     pointer-events: none;
   }
 
-  .layout {
-    display: flex;
-    height: 100vh;
-    position: relative;
-    z-index: 1;
-  }
+  .layout { display: flex; height: 100vh; position: relative; z-index: 1; }
 
   /* Sidebar */
   .sidebar {
-    width: 280px;
-    min-width: 280px;
-    padding: 64px 40px;
-    display: flex;
-    flex-direction: column;
+    width: 280px; min-width: 280px; padding: 64px 40px;
+    display: flex; flex-direction: column;
     border-right: 1px solid rgba(255,255,255,.04);
   }
-
   .day-name {
     font-size: 48px; font-weight: 800; letter-spacing: -2px; line-height: 1.1;
     background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.7) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .date-sub { font-size: 20px; font-weight: 500; color: rgba(255,255,255,.35); margin-top: 8px; letter-spacing: 1px; }
-
   .date-nav { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
   .date-nav-btn {
     background: rgba(255,255,255,.06); border: none; color: rgba(255,255,255,.5);
@@ -72,7 +62,6 @@
 
   .sidebar-spacer { flex: 1; }
 
-  /* Total time */
   .total-time-section { margin-bottom: 28px; }
   .total-time-label {
     font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -84,15 +73,9 @@
     background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .total-time-value.empty {
-    background: none;
-    -webkit-text-fill-color: rgba(255,255,255,.1);
-  }
+  .total-time-value.empty { background: none; -webkit-text-fill-color: rgba(255,255,255,.1); }
 
-  .time {
-    font-size: 32px; font-weight: 700; color: rgba(255,255,255,.4);
-    letter-spacing: -1px;
-  }
+  .time { font-size: 32px; font-weight: 700; color: rgba(255,255,255,.4); letter-spacing: -1px; }
 
   .progress-section { margin-top: 24px; }
   .progress-info { font-size: 15px; font-weight: 600; color: #FF8A3D; margin-bottom: 10px; }
@@ -106,7 +89,6 @@
     background: linear-gradient(90deg, #FF8A3D, #FF6B1A);
     border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1);
   }
-
   .clear-btn {
     margin-top: 24px; background: none; border: none;
     color: rgba(255,255,255,.25); font-size: 14px; font-weight: 500;
@@ -117,32 +99,20 @@
   .clear-btn:hover { color: #FF8A3D; }
 
   /* Main */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
+  .main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
   .list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 48px 48px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex: 1; overflow-y: auto; padding: 48px 48px 24px;
+    display: flex; flex-direction: column; gap: 10px;
   }
   .list::-webkit-scrollbar { width: 6px; }
   .list::-webkit-scrollbar-track { background: transparent; }
   .list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 3px; }
-  .list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
 
   .loading {
     display: flex; align-items: center; justify-content: center;
     padding: 80px 0; color: rgba(255,255,255,.2); font-size: 18px;
   }
-
   .empty {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; flex: 1; gap: 16px;
@@ -160,6 +130,7 @@
     margin-top: 16px; padding-left: 4px;
   }
 
+  /* Todo item */
   .todo-item {
     display: flex; align-items: center; gap: 14px;
     padding: 18px 24px; background: rgba(255,255,255,.03);
@@ -170,10 +141,14 @@
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
   .todo-item.timing { background: rgba(255,138,61,.04); }
+  .todo-item.countdown-done { animation: flashDone 1s ease 3; }
+  @keyframes flashDone {
+    0%, 100% { background: rgba(255,138,61,.04); }
+    50% { background: rgba(255,138,61,.12); }
+  }
   .todo-item.dragging {
     opacity: .85; background: rgba(255,138,61,.08);
-    transform: scale(1.02); z-index: 10;
-    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    transform: scale(1.02); z-index: 10; box-shadow: 0 8px 32px rgba(0,0,0,.4);
   }
   .todo-item.drag-over-above { box-shadow: 0 -2px 0 0 #FF8A3D; }
   .todo-item.drag-over-below { box-shadow: 0 2px 0 0 #FF8A3D; }
@@ -201,21 +176,28 @@
   .todo-text { font-size: 22px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
-  /* Timer */
-  .timer-group {
-    display: flex; align-items: center; gap: 8px;
-  }
+  /* Timer controls */
+  .timer-group { display: flex; align-items: center; gap: 6px; }
+
   .timer-display {
-    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3);
-    font-variant-numeric: tabular-nums; min-width: 52px; text-align: right;
-    letter-spacing: .5px;
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.25);
+    font-variant-numeric: tabular-nums; min-width: 48px; text-align: right;
+    letter-spacing: .5px; cursor: pointer; padding: 4px 6px;
+    border-radius: 6px; transition: all .2s;
   }
-  .timer-display.active {
-    color: #FF8A3D;
+  .timer-display:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.4); }
+  .timer-display.active { color: #FF8A3D; }
+  .timer-display.has-time { color: rgba(255,255,255,.4); }
+  .timer-display.countdown-warning { color: #ff4444; }
+
+  .set-time-input {
+    width: 56px; padding: 4px 6px; font-size: 14px; font-weight: 600;
+    color: #FF8A3D; background: rgba(255,138,61,.08);
+    border: 1px solid rgba(255,138,61,.3); border-radius: 6px;
+    outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: center; font-variant-numeric: tabular-nums;
   }
-  .timer-display.has-time {
-    color: rgba(255,255,255,.4);
-  }
+  .set-time-input::placeholder { color: rgba(255,138,61,.3); }
 
   .timer-btn {
     background: none; border: 1.5px solid rgba(255,255,255,.12);
@@ -235,6 +217,11 @@
     50% { box-shadow: 0 0 0 6px rgba(255,138,61,0); }
   }
 
+  .done-time {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,.3);
+    font-variant-numeric: tabular-nums;
+  }
+
   .remove-btn {
     background: none; border: none; color: #fff; font-size: 26px;
     cursor: pointer; opacity: .15; transition: opacity .2s;
@@ -248,7 +235,6 @@
     padding: 20px 48px 40px;
     background: linear-gradient(to top, #050507 60%, transparent);
   }
-
   .input-area input {
     flex: 1; padding: 20px 24px; font-size: 20px; font-weight: 500;
     color: #fff; background: rgba(255,255,255,.04);
@@ -284,14 +270,11 @@
       <button class="date-nav-btn" id="nextDay">&rarr;</button>
       <button class="today-btn hidden" id="todayBtn">Today</button>
     </div>
-
     <div class="sidebar-spacer"></div>
-
     <div class="total-time-section">
       <div class="total-time-label">Time today</div>
       <div class="total-time-value empty" id="totalTime">0:00</div>
     </div>
-
     <div class="time" id="clock"></div>
     <div class="progress-section">
       <div class="progress-info" id="progressInfo"></div>
@@ -337,10 +320,98 @@
   let loading = false;
 
   // Timer state
-  let activeTimerId = null;   // which todo id is being timed
-  let timerStartedAt = null;  // Date.now() when timer started
-  let tickInterval = null;    // setInterval ref
+  let activeTimerId = null;
+  let timerStartedAt = null;
+  let tickInterval = null;
+  let editingTimerId = null; // which task is showing the set-time input
 
+  // ---- Audio ----
+  let audioCtx = null;
+  function getAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function playTick() {
+    try {
+      const ctx = getAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 800;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.03, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.08);
+    } catch {}
+  }
+
+  function playStart() {
+    try {
+      const ctx = getAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 600;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.15);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.frequency.value = 900;
+      osc2.type = 'sine';
+      gain2.gain.setValueAtTime(0.12, ctx.currentTime + 0.1);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      osc2.start(ctx.currentTime + 0.1);
+      osc2.stop(ctx.currentTime + 0.25);
+    } catch {}
+  }
+
+  function playStop() {
+    try {
+      const ctx = getAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 500;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    } catch {}
+  }
+
+  function playAlarm() {
+    try {
+      const ctx = getAudio();
+      const notes = [880, 1100, 880, 1100, 880, 1320];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        const t = ctx.currentTime + i * 0.18;
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.start(t);
+        osc.stop(t + 0.16);
+      });
+    } catch {}
+  }
+
+  // ---- Helpers ----
   function dkey(d) {
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
@@ -348,8 +419,7 @@
   function isToday() { return dkey(currentDate) === todayKey(); }
 
   function fmtTime(secs) {
-    const s = Math.floor(secs);
-    if (s < 60) return `0:${String(s).padStart(2,'0')}`;
+    const s = Math.max(0, Math.floor(secs));
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
@@ -360,6 +430,12 @@
   function getActiveElapsed() {
     if (!activeTimerId || !timerStartedAt) return 0;
     return (Date.now() - timerStartedAt) / 1000;
+  }
+
+  function getCountdownRemaining(todo) {
+    if (!todo.countdownSecs) return null;
+    const elapsed = (todo.timeSpent || 0) + (todo.id === activeTimerId ? getActiveElapsed() : 0);
+    return Math.max(0, todo.countdownSecs - elapsed);
   }
 
   function getTotalTime() {
@@ -380,24 +456,39 @@
 
   function updateActiveTimerDisplay() {
     if (!activeTimerId) return;
+    const todo = todos.find(t => t.id === activeTimerId);
+    if (!todo) return;
+
     const el = document.querySelector(`.todo-item[data-id="${activeTimerId}"] .timer-display`);
     if (el) {
-      const todo = todos.find(t => t.id === activeTimerId);
-      const elapsed = (todo?.timeSpent || 0) + getActiveElapsed();
-      el.textContent = fmtTime(elapsed);
+      const elapsed = (todo.timeSpent || 0) + getActiveElapsed();
+      if (todo.countdownSecs) {
+        const remaining = Math.max(0, todo.countdownSecs - elapsed);
+        el.textContent = fmtTime(remaining);
+        el.classList.toggle('countdown-warning', remaining <= 30 && remaining > 0);
+
+        // Countdown finished
+        if (remaining <= 0) {
+          playAlarm();
+          const itemEl = document.querySelector(`.todo-item[data-id="${activeTimerId}"]`);
+          if (itemEl) itemEl.classList.add('countdown-done');
+          stopTimer();
+          return;
+        }
+      } else {
+        el.textContent = fmtTime(elapsed);
+      }
     }
     updateTotalTimeDisplay();
+    playTick();
   }
 
   function startTimer(id) {
-    // Stop any running timer first
     if (activeTimerId) stopTimer(false);
-
     activeTimerId = id;
     timerStartedAt = Date.now();
-    tickInterval = setInterval(() => {
-      updateActiveTimerDisplay();
-    }, 1000);
+    playStart();
+    tickInterval = setInterval(updateActiveTimerDisplay, 1000);
     render();
   }
 
@@ -421,6 +512,7 @@
 
     if (todo) {
       todo.timeSpent = (todo.timeSpent || 0) + elapsed;
+      playStop();
       try {
         await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent });
       } catch (e) { console.error('Timer save error:', e); }
@@ -430,29 +522,43 @@
   }
 
   function toggleTimer(id) {
-    if (activeTimerId === id) {
-      stopTimer();
-    } else {
-      startTimer(id);
-    }
+    if (activeTimerId === id) stopTimer();
+    else startTimer(id);
+  }
+
+  async function setCountdown(id, minutes) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    todo.countdownSecs = minutes * 60;
+    todo.timeSpent = 0; // reset time when setting new countdown
+    editingTimerId = null;
+    render();
+    try {
+      await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 });
+    } catch (e) { console.error('Set countdown error:', e); }
+  }
+
+  async function clearCountdown(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    todo.countdownSecs = 0;
+    editingTimerId = null;
+    render();
+    try {
+      await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: 0 });
+    } catch (e) { console.error('Clear countdown error:', e); }
   }
 
   // ---- Firebase CRUD ----
-
   async function loadTodos() {
-    // Stop any running timer when switching days
     if (activeTimerId) await stopTimer(false);
-
     loading = true;
     render();
     try {
       const q = query(todosCol, where('date', '==', dkey(currentDate)), orderBy('position'));
       const snap = await getDocs(q);
       todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (e) {
-      console.error('Load error:', e);
-      todos = [];
-    }
+    } catch (e) { console.error('Load error:', e); todos = []; }
     loading = false;
     render();
   }
@@ -461,38 +567,30 @@
     const maxPos = todos.length > 0 ? Math.max(...todos.map(t => t.position)) + 1 : 0;
     try {
       const ref = await addDoc(todosCol, {
-        text,
-        done: false,
-        date: dkey(currentDate),
-        position: maxPos,
-        timeSpent: 0,
-        createdAt: new Date().toISOString()
+        text, done: false, date: dkey(currentDate), position: maxPos,
+        timeSpent: 0, countdownSecs: 0, createdAt: new Date().toISOString()
       });
-      todos.push({ id: ref.id, text, done: false, date: dkey(currentDate), position: maxPos, timeSpent: 0 });
+      todos.push({ id: ref.id, text, done: false, date: dkey(currentDate), position: maxPos, timeSpent: 0, countdownSecs: 0 });
       render();
     } catch (e) { console.error('Add error:', e); }
   }
 
   async function toggleTodo(id) {
-    // Stop timer if completing the timed task
     if (activeTimerId === id) await stopTimer(false);
-
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
     todo.done = !todo.done;
     render();
-    try {
-      await updateDoc(doc(db, 'tv_todos', id), { done: todo.done });
-    } catch (e) { console.error('Toggle error:', e); }
+    try { await updateDoc(doc(db, 'tv_todos', id), { done: todo.done }); }
+    catch (e) { console.error('Toggle error:', e); }
   }
 
   async function removeTodo(id) {
     if (activeTimerId === id) await stopTimer(false);
     todos = todos.filter(t => t.id !== id);
     render();
-    try {
-      await deleteDoc(doc(db, 'tv_todos', id));
-    } catch (e) { console.error('Remove error:', e); }
+    try { await deleteDoc(doc(db, 'tv_todos', id)); }
+    catch (e) { console.error('Remove error:', e); }
   }
 
   async function clearCompleted() {
@@ -509,9 +607,7 @@
   async function savePositions() {
     try {
       const batch = writeBatch(db);
-      todos.forEach((t, i) => {
-        batch.update(doc(db, 'tv_todos', t.id), { position: i });
-      });
+      todos.forEach((t, i) => batch.update(doc(db, 'tv_todos', t.id), { position: i }));
       await batch.commit();
     } catch (e) { console.error('Position error:', e); }
   }
@@ -522,18 +618,11 @@
     updateHeader();
     loadTodos();
   }
-
-  function goToday() {
-    currentDate = new Date();
-    updateHeader();
-    loadTodos();
-  }
+  function goToday() { currentDate = new Date(); updateHeader(); loadTodos(); }
 
   function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
-
   function updateHeader() {
     const d = currentDate;
     document.getElementById('dayName').textContent = DAYS[d.getDay()];
@@ -543,7 +632,6 @@
     else todayBtn.classList.remove('hidden');
   }
 
-  // Play icon SVG
   const playSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>`;
   const pauseSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>`;
 
@@ -553,7 +641,6 @@
     const progressFill = document.getElementById('progressFill');
     const progressInfo = document.getElementById('progressInfo');
     const clearBtn = document.getElementById('clearBtn');
-
     updateTotalTimeDisplay();
 
     if (loading) {
@@ -566,7 +653,6 @@
 
     const doneCount = todos.filter(t => t.done).length;
     const total = todos.length;
-
     if (total > 0) {
       progressTrack.classList.add('visible');
       progressFill.style.width = `${(doneCount / total) * 100}%`;
@@ -575,24 +661,17 @@
       progressTrack.classList.remove('visible');
       progressInfo.textContent = '';
     }
-
     clearBtn.classList.toggle('visible', doneCount > 0);
     list.innerHTML = '';
 
     if (total === 0) {
-      list.innerHTML = `
-        <div class="empty">
-          <div class="empty-icon">+</div>
-          <div class="empty-text">No tasks yet</div>
-        </div>`;
+      list.innerHTML = `<div class="empty"><div class="empty-icon">+</div><div class="empty-text">No tasks yet</div></div>`;
       return;
     }
 
     const pending = todos.filter(t => !t.done);
     const done = todos.filter(t => t.done);
-
     pending.forEach(todo => list.appendChild(buildItem(todo)));
-
     if (done.length > 0) {
       const label = document.createElement('div');
       label.className = 'section-label';
@@ -604,15 +683,45 @@
 
   function buildItem(todo) {
     const isActive = activeTimerId === todo.id;
-    const hasTime = (todo.timeSpent || 0) > 0 || isActive;
-    const displayTime = isActive
-      ? (todo.timeSpent || 0) + getActiveElapsed()
-      : (todo.timeSpent || 0);
+    const elapsed = (todo.timeSpent || 0) + (isActive ? getActiveElapsed() : 0);
+    const hasCountdown = (todo.countdownSecs || 0) > 0;
+    const hasTime = elapsed > 0 || hasCountdown;
+    const isEditing = editingTimerId === todo.id;
+
+    let displayText = '';
+    let isWarning = false;
+    if (hasCountdown) {
+      const remaining = Math.max(0, todo.countdownSecs - elapsed);
+      displayText = fmtTime(remaining);
+      if (remaining <= 30 && remaining > 0 && isActive) isWarning = true;
+    } else if (elapsed > 0) {
+      displayText = fmtTime(elapsed);
+    }
 
     const el = document.createElement('div');
     el.className = 'todo-item' + (todo.done ? ' done' : '') + (isActive ? ' timing' : '');
     el.dataset.id = todo.id;
     if (!todo.done) el.draggable = true;
+
+    let timerHTML = '';
+    if (!todo.done) {
+      if (isEditing) {
+        timerHTML = `
+          <div class="timer-group">
+            <input class="set-time-input" type="number" min="1" max="999" placeholder="min" autofocus>
+            <button class="timer-btn" title="Cancel">✕</button>
+          </div>`;
+      } else {
+        timerHTML = `
+          <div class="timer-group">
+            <span class="timer-display ${isActive ? 'active' : ''} ${hasTime ? 'has-time' : ''} ${isWarning ? 'countdown-warning' : ''}"
+                  title="Click to set countdown">${displayText}</span>
+            <button class="timer-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>
+          </div>`;
+      }
+    } else if (hasTime) {
+      timerHTML = `<span class="done-time">${fmtTime(elapsed)}</span>`;
+    }
 
     el.innerHTML = `
       <div class="drag-handle" ${todo.done ? 'style="opacity:0;pointer-events:none"' : ''}>
@@ -624,85 +733,97 @@
         </svg>
       </div>
       <span class="todo-text">${escHtml(todo.text)}</span>
-      <div class="timer-group" ${todo.done ? 'style="pointer-events:none"' : ''}>
-        <span class="timer-display ${isActive ? 'active' : ''} ${hasTime ? 'has-time' : ''}">${hasTime ? fmtTime(displayTime) : ''}</span>
-        ${!todo.done ? `<button class="timer-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>` : ''}
-      </div>
-      ${(todo.done && hasTime) ? `<span class="timer-display has-time">${fmtTime(displayTime)}</span>` : ''}
+      ${timerHTML}
       <button class="remove-btn">&times;</button>`;
 
-    // Checkbox toggle
+    // Checkbox
     el.addEventListener('click', (e) => {
-      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle') || e.target.closest('.timer-btn') || e.target.closest('.timer-group')) return;
+      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle') || e.target.closest('.timer-btn') || e.target.closest('.timer-display') || e.target.closest('.set-time-input')) return;
       toggleTodo(todo.id);
     });
 
-    // Remove
     el.querySelector('.remove-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       removeTodo(todo.id);
     });
 
-    // Timer button
-    const timerBtn = el.querySelector('.timer-btn');
-    if (timerBtn) {
-      timerBtn.addEventListener('click', (e) => {
+    // Timer display click → open set countdown input
+    const timerDisp = el.querySelector('.timer-display');
+    if (timerDisp && !todo.done) {
+      timerDisp.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleTimer(todo.id);
+        if (isActive) return; // don't edit while running
+        editingTimerId = todo.id;
+        render();
       });
     }
 
-    // Drag (pending only)
+    // Editing mode
+    if (isEditing) {
+      const inp = el.querySelector('.set-time-input');
+      const cancelBtn = el.querySelector('.timer-btn');
+
+      inp.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          const mins = parseInt(inp.value);
+          if (mins > 0) setCountdown(todo.id, mins);
+          else { editingTimerId = null; render(); }
+        }
+        if (e.key === 'Escape') { editingTimerId = null; render(); }
+      });
+      inp.addEventListener('click', (e) => e.stopPropagation());
+
+      cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (hasCountdown) clearCountdown(todo.id);
+        else { editingTimerId = null; render(); }
+      });
+
+      setTimeout(() => inp.focus(), 10);
+    }
+
+    // Play/pause
+    if (!isEditing) {
+      const timerBtn = el.querySelector('.timer-btn');
+      if (timerBtn && !todo.done) {
+        timerBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleTimer(todo.id);
+        });
+      }
+    }
+
+    // Drag
     if (!todo.done) {
       el.addEventListener('dragstart', (e) => {
-        dragSrcId = todo.id;
-        el.classList.add('dragging');
+        dragSrcId = todo.id; el.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
       });
-
       el.addEventListener('dragend', () => {
-        el.classList.remove('dragging');
-        dragSrcId = null;
-        clearDragStyles();
+        el.classList.remove('dragging'); dragSrcId = null; clearDragStyles();
       });
-
       el.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+        e.preventDefault(); e.dataTransfer.dropEffect = 'move';
         clearDragStyles();
         const rect = el.getBoundingClientRect();
-        if (e.clientY < rect.top + rect.height / 2) {
-          el.classList.add('drag-over-above');
-        } else {
-          el.classList.add('drag-over-below');
-        }
+        el.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drag-over-above' : 'drag-over-below');
       });
-
-      el.addEventListener('dragleave', () => {
-        el.classList.remove('drag-over-above', 'drag-over-below');
-      });
-
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over-above', 'drag-over-below'));
       el.addEventListener('drop', (e) => {
-        e.preventDefault();
-        clearDragStyles();
+        e.preventDefault(); clearDragStyles();
         if (!dragSrcId || dragSrcId === todo.id) return;
-
         const srcIdx = todos.findIndex(t => t.id === dragSrcId);
-        const tgtIdx = todos.findIndex(t => t.id === todo.id);
-        if (srcIdx === -1 || tgtIdx === -1) return;
-
+        if (srcIdx === -1) return;
         const [item] = todos.splice(srcIdx, 1);
         let insertAt = todos.findIndex(t => t.id === todo.id);
         if (insertAt === -1) insertAt = todos.length;
-
         const rect = el.getBoundingClientRect();
         if (e.clientY >= rect.top + rect.height / 2) insertAt++;
-
         todos.splice(insertAt, 0, item);
         todos.forEach((t, i) => t.position = i);
         dragSrcId = null;
-        render();
-        savePositions();
+        render(); savePositions();
       });
     }
 
@@ -710,9 +831,8 @@
   }
 
   function clearDragStyles() {
-    document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el => {
-      el.classList.remove('drag-over-above', 'drag-over-below');
-    });
+    document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el =>
+      el.classList.remove('drag-over-above', 'drag-over-below'));
   }
 
   function escHtml(s) {
@@ -730,15 +850,11 @@
     input.focus();
   }
 
-  updateClock();
-  updateHeader();
-  loadTodos();
+  updateClock(); updateHeader(); loadTodos();
   setInterval(updateClock, 60000);
 
   document.getElementById('addBtn').addEventListener('click', handleAdd);
-  document.getElementById('todoInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') handleAdd();
-  });
+  document.getElementById('todoInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleAdd(); });
   document.getElementById('clearBtn').addEventListener('click', clearCompleted);
   document.getElementById('prevDay').addEventListener('click', () => shiftDate(-1));
   document.getElementById('nextDay').addEventListener('click', () => shiftDate(1));
