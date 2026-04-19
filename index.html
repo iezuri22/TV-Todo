@@ -72,25 +72,51 @@
     border-radius: 50%; border: 2px solid rgba(255,255,255,.06);
   }
   .empty-text { font-size: 20px; color: rgba(255,255,255,.2); font-weight: 500; }
-  .empty-btn {
-    margin-top: 16px; padding: 16px 32px; font-size: 18px; font-weight: 600;
-    color: rgba(255,255,255,.6); background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.1); border-radius: 16px;
-    cursor: pointer; transition: all .2s; font-family: inherit;
+
+  /* Section label */
+  .section-label {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 4px;
+    margin-top: 20px; padding-left: 4px;
   }
-  .empty-btn:hover { background: rgba(255,138,61,.15); border-color: #FF8A3D; }
 
   /* Todo list */
   .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
 
   .todo-item {
-    display: flex; align-items: center; gap: 20px;
+    display: flex; align-items: center; gap: 16px;
     padding: 22px 28px; background: rgba(255,255,255,.03);
-    border-radius: 16px; cursor: pointer; transition: all .2s;
+    border-radius: 16px; cursor: pointer; transition: background .2s, opacity .2s, transform .15s;
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    user-select: none; position: relative;
   }
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
+  .todo-item.dragging {
+    opacity: .85;
+    background: rgba(255,138,61,.08);
+    transform: scale(1.02);
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .todo-item.drag-over-above {
+    box-shadow: 0 -2px 0 0 #FF8A3D;
+  }
+  .todo-item.drag-over-below {
+    box-shadow: 0 2px 0 0 #FF8A3D;
+  }
+
+  .drag-handle {
+    display: flex; flex-direction: column; gap: 3px;
+    cursor: grab; padding: 6px 4px; opacity: .2;
+    transition: opacity .2s; min-width: 18px; align-items: center;
+  }
+  .drag-handle:hover { opacity: .5; }
+  .drag-handle:active { cursor: grabbing; }
+  .drag-handle span {
+    display: block; width: 14px; height: 2px;
+    background: #fff; border-radius: 1px;
+  }
 
   .checkbox {
     width: 34px; height: 34px; min-width: 34px; border-radius: 10px;
@@ -188,6 +214,7 @@ const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Satur
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 let todos = [];
+let dragSrcRealIndex = null;
 
 function todayKey() {
   const d = new Date();
@@ -220,6 +247,9 @@ function updateClock() {
   document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
+function getPending() { return todos.filter(t => !t.done); }
+function getDone() { return todos.filter(t => t.done); }
+
 function render() {
   const list = document.getElementById('list');
   const inputArea = document.getElementById('inputArea');
@@ -228,24 +258,21 @@ function render() {
   const progressInfo = document.getElementById('progressInfo');
   const clearBtn = document.getElementById('clearBtn');
 
-  const done = todos.filter(t => t.done).length;
+  const doneCount = getDone().length;
   const total = todos.length;
 
-  // Progress
   if (total > 0) {
     progressTrack.classList.add('visible');
-    progressFill.style.width = `${(done / total) * 100}%`;
-    progressInfo.textContent = `${done}/${total} done`;
+    progressFill.style.width = `${(doneCount / total) * 100}%`;
+    progressInfo.textContent = `${doneCount}/${total} done`;
   } else {
     progressTrack.classList.remove('visible');
     progressInfo.textContent = '';
   }
 
-  // Clear btn
-  if (done > 0) clearBtn.classList.add('visible');
+  if (doneCount > 0) clearBtn.classList.add('visible');
   else clearBtn.classList.remove('visible');
 
-  // List
   list.innerHTML = '';
 
   if (total === 0) {
@@ -260,30 +287,124 @@ function render() {
 
   inputArea.classList.remove('hidden');
 
-  todos.forEach((todo, i) => {
-    const el = document.createElement('div');
-    el.className = 'todo-item' + (todo.done ? ' done' : '');
-    el.innerHTML = `
-      <div class="checkbox">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#050507" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </div>
-      <span class="todo-text">${escHtml(todo.text)}</span>
-      <button class="remove-btn" data-i="${i}">×</button>`;
-    el.addEventListener('click', (e) => {
-      if (e.target.classList.contains('remove-btn')) return;
-      todos[i].done = !todos[i].done;
+  const pending = getPending();
+  const done = getDone();
+
+  pending.forEach(todo => {
+    list.appendChild(buildItem(todo));
+  });
+
+  if (done.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.textContent = 'Completed';
+    list.appendChild(label);
+    done.forEach(todo => {
+      list.appendChild(buildItem(todo));
+    });
+  }
+}
+
+function buildItem(todo) {
+  const realIndex = todos.indexOf(todo);
+  const el = document.createElement('div');
+  el.className = 'todo-item' + (todo.done ? ' done' : '');
+  el.dataset.realIndex = realIndex;
+
+  // Only pending items are draggable
+  if (!todo.done) el.draggable = true;
+
+  el.innerHTML = `
+    <div class="drag-handle" ${todo.done ? 'style="opacity:0;pointer-events:none"' : ''}>
+      <span></span><span></span><span></span>
+    </div>
+    <div class="checkbox">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#050507" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <span class="todo-text">${escHtml(todo.text)}</span>
+    <button class="remove-btn">&times;</button>`;
+
+  // Toggle
+  el.addEventListener('click', (e) => {
+    if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')) return;
+    const ri = todos.indexOf(todo);
+    todos[ri].done = !todos[ri].done;
+    save();
+    render();
+  });
+
+  // Remove
+  el.querySelector('.remove-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const ri = todos.indexOf(todo);
+    todos.splice(ri, 1);
+    save();
+    render();
+  });
+
+  // Drag & drop (pending only)
+  if (!todo.done) {
+    el.addEventListener('dragstart', (e) => {
+      dragSrcRealIndex = todos.indexOf(todo);
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      dragSrcRealIndex = null;
+      clearAllDragStyles();
+    });
+
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      clearAllDragStyles();
+      const rect = el.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        el.classList.add('drag-over-above');
+      } else {
+        el.classList.add('drag-over-below');
+      }
+    });
+
+    el.addEventListener('dragleave', () => {
+      el.classList.remove('drag-over-above', 'drag-over-below');
+    });
+
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+      clearAllDragStyles();
+      if (dragSrcRealIndex === null) return;
+
+      const targetRealIndex = todos.indexOf(todo);
+      if (dragSrcRealIndex === targetRealIndex) return;
+
+      // Pull item out
+      const [item] = todos.splice(dragSrcRealIndex, 1);
+
+      // Recalculate target position after removal
+      let insertAt = todos.indexOf(todo);
+      if (insertAt === -1) insertAt = todos.length;
+
+      const rect = el.getBoundingClientRect();
+      if (e.clientY >= rect.top + rect.height / 2) insertAt++;
+
+      todos.splice(insertAt, 0, item);
+      dragSrcRealIndex = null;
       save();
       render();
     });
-    el.querySelector('.remove-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      todos.splice(i, 1);
-      save();
-      render();
-    });
-    list.appendChild(el);
+  }
+
+  return el;
+}
+
+function clearAllDragStyles() {
+  document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el => {
+    el.classList.remove('drag-over-above', 'drag-over-below');
   });
 }
 
