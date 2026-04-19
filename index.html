@@ -29,7 +29,6 @@
     pointer-events: none;
   }
 
-  /* Layout */
   .layout {
     display: flex;
     height: 100vh;
@@ -73,6 +72,23 @@
 
   .sidebar-spacer { flex: 1; }
 
+  /* Total time */
+  .total-time-section { margin-bottom: 28px; }
+  .total-time-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 6px;
+  }
+  .total-time-value {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .total-time-value.empty {
+    background: none;
+    -webkit-text-fill-color: rgba(255,255,255,.1);
+  }
+
   .time {
     font-size: 32px; font-weight: 700; color: rgba(255,255,255,.4);
     letter-spacing: -1px;
@@ -100,7 +116,7 @@
   .clear-btn.visible { display: inline-block; }
   .clear-btn:hover { color: #FF8A3D; }
 
-  /* Main content */
+  /* Main */
   .main {
     flex: 1;
     display: flex;
@@ -145,14 +161,15 @@
   }
 
   .todo-item {
-    display: flex; align-items: center; gap: 16px;
-    padding: 20px 24px; background: rgba(255,255,255,.03);
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 24px; background: rgba(255,255,255,.03);
     border-radius: 16px; cursor: pointer; transition: background .2s, opacity .2s, transform .15s;
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
     user-select: none; position: relative; flex-shrink: 0;
   }
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
+  .todo-item.timing { background: rgba(255,138,61,.04); }
   .todo-item.dragging {
     opacity: .85; background: rgba(255,138,61,.08);
     transform: scale(1.02); z-index: 10;
@@ -184,6 +201,40 @@
   .todo-text { font-size: 22px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
+  /* Timer */
+  .timer-group {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .timer-display {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3);
+    font-variant-numeric: tabular-nums; min-width: 52px; text-align: right;
+    letter-spacing: .5px;
+  }
+  .timer-display.active {
+    color: #FF8A3D;
+  }
+  .timer-display.has-time {
+    color: rgba(255,255,255,.4);
+  }
+
+  .timer-btn {
+    background: none; border: 1.5px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.35); width: 32px; height: 32px;
+    border-radius: 50%; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: all .2s; padding: 0;
+  }
+  .timer-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
+  .timer-btn.active {
+    border-color: #FF8A3D; color: #FF8A3D;
+    background: rgba(255,138,61,.1);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,138,61,.2); }
+    50% { box-shadow: 0 0 0 6px rgba(255,138,61,0); }
+  }
+
   .remove-btn {
     background: none; border: none; color: #fff; font-size: 26px;
     cursor: pointer; opacity: .15; transition: opacity .2s;
@@ -191,7 +242,7 @@
   }
   .remove-btn:hover { opacity: 1; }
 
-  /* Input pinned to bottom */
+  /* Input */
   .input-area {
     display: flex; gap: 14px; align-items: center;
     padding: 20px 48px 40px;
@@ -225,7 +276,6 @@
 <div class="glow-bl"></div>
 
 <div class="layout">
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="day-name" id="dayName"></div>
     <div class="date-sub" id="dateSub"></div>
@@ -237,6 +287,11 @@
 
     <div class="sidebar-spacer"></div>
 
+    <div class="total-time-section">
+      <div class="total-time-label">Time today</div>
+      <div class="total-time-value empty" id="totalTime">0:00</div>
+    </div>
+
     <div class="time" id="clock"></div>
     <div class="progress-section">
       <div class="progress-info" id="progressInfo"></div>
@@ -247,7 +302,6 @@
     <button class="clear-btn" id="clearBtn">Clear completed</button>
   </div>
 
-  <!-- Main -->
   <div class="main">
     <div class="list" id="list"></div>
     <div class="input-area" id="inputArea">
@@ -257,7 +311,6 @@
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
   import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, writeBatch } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
@@ -283,13 +336,113 @@
   let dragSrcId = null;
   let loading = false;
 
+  // Timer state
+  let activeTimerId = null;   // which todo id is being timed
+  let timerStartedAt = null;  // Date.now() when timer started
+  let tickInterval = null;    // setInterval ref
+
   function dkey(d) {
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
   function todayKey() { return dkey(new Date()); }
   function isToday() { return dkey(currentDate) === todayKey(); }
 
+  function fmtTime(secs) {
+    const s = Math.floor(secs);
+    if (s < 60) return `0:${String(s).padStart(2,'0')}`;
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    return `${m}:${String(sec).padStart(2,'0')}`;
+  }
+
+  function getActiveElapsed() {
+    if (!activeTimerId || !timerStartedAt) return 0;
+    return (Date.now() - timerStartedAt) / 1000;
+  }
+
+  function getTotalTime() {
+    let total = 0;
+    for (const t of todos) {
+      total += (t.timeSpent || 0);
+      if (t.id === activeTimerId) total += getActiveElapsed();
+    }
+    return total;
+  }
+
+  function updateTotalTimeDisplay() {
+    const el = document.getElementById('totalTime');
+    const total = getTotalTime();
+    el.textContent = fmtTime(total);
+    el.classList.toggle('empty', total < 1);
+  }
+
+  function updateActiveTimerDisplay() {
+    if (!activeTimerId) return;
+    const el = document.querySelector(`.todo-item[data-id="${activeTimerId}"] .timer-display`);
+    if (el) {
+      const todo = todos.find(t => t.id === activeTimerId);
+      const elapsed = (todo?.timeSpent || 0) + getActiveElapsed();
+      el.textContent = fmtTime(elapsed);
+    }
+    updateTotalTimeDisplay();
+  }
+
+  function startTimer(id) {
+    // Stop any running timer first
+    if (activeTimerId) stopTimer(false);
+
+    activeTimerId = id;
+    timerStartedAt = Date.now();
+    tickInterval = setInterval(() => {
+      updateActiveTimerDisplay();
+    }, 1000);
+    render();
+  }
+
+  async function stopTimer(doRender = true) {
+    if (!activeTimerId || !timerStartedAt) {
+      activeTimerId = null;
+      timerStartedAt = null;
+      if (tickInterval) clearInterval(tickInterval);
+      tickInterval = null;
+      return;
+    }
+
+    const elapsed = getActiveElapsed();
+    const todo = todos.find(t => t.id === activeTimerId);
+    const id = activeTimerId;
+
+    activeTimerId = null;
+    timerStartedAt = null;
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = null;
+
+    if (todo) {
+      todo.timeSpent = (todo.timeSpent || 0) + elapsed;
+      try {
+        await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent });
+      } catch (e) { console.error('Timer save error:', e); }
+    }
+
+    if (doRender) render();
+  }
+
+  function toggleTimer(id) {
+    if (activeTimerId === id) {
+      stopTimer();
+    } else {
+      startTimer(id);
+    }
+  }
+
+  // ---- Firebase CRUD ----
+
   async function loadTodos() {
+    // Stop any running timer when switching days
+    if (activeTimerId) await stopTimer(false);
+
     loading = true;
     render();
     try {
@@ -312,14 +465,18 @@
         done: false,
         date: dkey(currentDate),
         position: maxPos,
+        timeSpent: 0,
         createdAt: new Date().toISOString()
       });
-      todos.push({ id: ref.id, text, done: false, date: dkey(currentDate), position: maxPos });
+      todos.push({ id: ref.id, text, done: false, date: dkey(currentDate), position: maxPos, timeSpent: 0 });
       render();
     } catch (e) { console.error('Add error:', e); }
   }
 
   async function toggleTodo(id) {
+    // Stop timer if completing the timed task
+    if (activeTimerId === id) await stopTimer(false);
+
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
     todo.done = !todo.done;
@@ -330,6 +487,7 @@
   }
 
   async function removeTodo(id) {
+    if (activeTimerId === id) await stopTimer(false);
     todos = todos.filter(t => t.id !== id);
     render();
     try {
@@ -385,12 +543,18 @@
     else todayBtn.classList.remove('hidden');
   }
 
+  // Play icon SVG
+  const playSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>`;
+  const pauseSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>`;
+
   function render() {
     const list = document.getElementById('list');
     const progressTrack = document.getElementById('progressTrack');
     const progressFill = document.getElementById('progressFill');
     const progressInfo = document.getElementById('progressInfo');
     const clearBtn = document.getElementById('clearBtn');
+
+    updateTotalTimeDisplay();
 
     if (loading) {
       list.innerHTML = '<div class="loading">Loading...</div>';
@@ -439,8 +603,14 @@
   }
 
   function buildItem(todo) {
+    const isActive = activeTimerId === todo.id;
+    const hasTime = (todo.timeSpent || 0) > 0 || isActive;
+    const displayTime = isActive
+      ? (todo.timeSpent || 0) + getActiveElapsed()
+      : (todo.timeSpent || 0);
+
     const el = document.createElement('div');
-    el.className = 'todo-item' + (todo.done ? ' done' : '');
+    el.className = 'todo-item' + (todo.done ? ' done' : '') + (isActive ? ' timing' : '');
     el.dataset.id = todo.id;
     if (!todo.done) el.draggable = true;
 
@@ -454,18 +624,35 @@
         </svg>
       </div>
       <span class="todo-text">${escHtml(todo.text)}</span>
+      <div class="timer-group" ${todo.done ? 'style="pointer-events:none"' : ''}>
+        <span class="timer-display ${isActive ? 'active' : ''} ${hasTime ? 'has-time' : ''}">${hasTime ? fmtTime(displayTime) : ''}</span>
+        ${!todo.done ? `<button class="timer-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>` : ''}
+      </div>
+      ${(todo.done && hasTime) ? `<span class="timer-display has-time">${fmtTime(displayTime)}</span>` : ''}
       <button class="remove-btn">&times;</button>`;
 
+    // Checkbox toggle
     el.addEventListener('click', (e) => {
-      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')) return;
+      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle') || e.target.closest('.timer-btn') || e.target.closest('.timer-group')) return;
       toggleTodo(todo.id);
     });
 
+    // Remove
     el.querySelector('.remove-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       removeTodo(todo.id);
     });
 
+    // Timer button
+    const timerBtn = el.querySelector('.timer-btn');
+    if (timerBtn) {
+      timerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleTimer(todo.id);
+      });
+    }
+
+    // Drag (pending only)
     if (!todo.done) {
       el.addEventListener('dragstart', (e) => {
         dragSrcId = todo.id;
