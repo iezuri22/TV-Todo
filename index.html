@@ -324,6 +324,28 @@
   let timerStartedAt = null;
   let tickInterval = null;
   let editingTimerId = null; // which task is showing the set-time input
+  let announcedMilestones = new Set(); // track which voice callouts have fired
+
+  // ---- Voice ----
+  function speak(text) {
+    try {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.1;
+      utter.pitch = 1.0;
+      utter.volume = 1;
+      // Try to pick a clean voice
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.name.includes('Samantha')) 
+        || voices.find(v => v.name.includes('Alex'))
+        || voices.find(v => v.lang === 'en-US' && v.localService);
+      if (preferred) utter.voice = preferred;
+      speechSynthesis.speak(utter);
+    } catch {}
+  }
+
+  // Preload voices (Chrome needs this)
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
 
   // ---- Audio ----
   let audioCtx = null;
@@ -464,8 +486,39 @@
       const elapsed = (todo.timeSpent || 0) + getActiveElapsed();
       if (todo.countdownSecs) {
         const remaining = Math.max(0, todo.countdownSecs - elapsed);
+        const remainingSecs = Math.floor(remaining);
         el.textContent = fmtTime(remaining);
         el.classList.toggle('countdown-warning', remaining <= 30 && remaining > 0);
+
+        // Voice: minute milestones (15, 10, 5, 2)
+        const remainingMins = Math.floor(remaining / 60);
+        const secsIntoMin = remainingSecs % 60;
+        const minuteMilestones = [15, 10, 5, 2];
+        for (const m of minuteMilestones) {
+          const key = `min-${m}`;
+          if (remainingMins === m && secsIntoMin === 0 && !announcedMilestones.has(key)) {
+            announcedMilestones.add(key);
+            speak(`${m} minutes`);
+          }
+          // Also catch if we just crossed below the milestone
+          if (remainingSecs <= m * 60 && remainingSecs > (m * 60 - 2) && secsIntoMin === 0 && !announcedMilestones.has(key)) {
+            announcedMilestones.add(key);
+            speak(`${m} minutes`);
+          }
+        }
+
+        // Voice: countdown 20 to 0
+        if (remainingSecs <= 20 && remainingSecs >= 0) {
+          const key = `sec-${remainingSecs}`;
+          if (!announcedMilestones.has(key)) {
+            announcedMilestones.add(key);
+            if (remainingSecs === 0) {
+              speak("Time's up");
+            } else {
+              speak(`${remainingSecs}`);
+            }
+          }
+        }
 
         // Countdown finished
         if (remaining <= 0) {
@@ -487,6 +540,7 @@
     if (activeTimerId) stopTimer(false);
     activeTimerId = id;
     timerStartedAt = Date.now();
+    announcedMilestones = new Set();
     playStart();
     tickInterval = setInterval(updateActiveTimerDisplay, 1000);
     render();
@@ -530,7 +584,8 @@
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
     todo.countdownSecs = minutes * 60;
-    todo.timeSpent = 0; // reset time when setting new countdown
+    todo.timeSpent = 0;
+    announcedMilestones = new Set();
     editingTimerId = null;
     render();
     try {
