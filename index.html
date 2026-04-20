@@ -244,6 +244,35 @@
   }
   .preset-cancel:hover { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.5); }
 
+  .custom-time-row {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; margin-top: 8px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.04);
+  }
+  .custom-time-row label {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,.25);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .custom-time-input {
+    width: 72px; padding: 10px 12px; font-size: 18px; font-weight: 700;
+    color: #fff; background: rgba(255,255,255,.05);
+    border: 1.5px solid rgba(255,255,255,.1); border-radius: 10px;
+    outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .custom-time-input:focus { border-color: rgba(255,138,61,.4); }
+  .custom-time-input::placeholder { color: rgba(255,255,255,.15); }
+  .custom-time-sep {
+    font-size: 20px; font-weight: 700; color: rgba(255,255,255,.2);
+  }
+  .custom-time-go {
+    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    border: none; color: #050507; height: 44px; padding: 0 22px;
+    border-radius: 10px; cursor: pointer; font-family: inherit;
+    font-size: 15px; font-weight: 700; transition: all .15s; margin-left: 4px;
+  }
+  .custom-time-go:hover { background: linear-gradient(135deg, #FF9B57, #FF8A3D); }
+
   .done-time { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3); font-variant-numeric: tabular-nums; }
 
   .remove-btn {
@@ -650,10 +679,10 @@
     if (activeTimerId === id) stopTimer(); else startTimer(id);
   }
 
-  async function setCountdown(id, minutes) {
+  async function setCountdown(id, minutes, extraSecs = 0) {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
-    todo.countdownSecs = minutes * 60; todo.timeSpent = 0;
+    todo.countdownSecs = (minutes * 60) + extraSecs; todo.timeSpent = 0;
     announcedMilestones = new Set(); pickerOpenId = null;
     render();
     try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 }); } catch {}
@@ -1039,7 +1068,14 @@
       picker.innerHTML = `
         <span class="timer-picker-label">Set</span>
         ${presets.map(m => `<button class="preset-btn ${curMins===m?'selected':''}">${m>=60?`${m/60}h`:`${m}m`}</button>`).join('')}
-        ${hasCountdown ? '<button class="preset-cancel">Clear</button>' : '<button class="preset-cancel">Cancel</button>'}`;
+        ${hasCountdown ? '<button class="preset-cancel">Clear</button>' : '<button class="preset-cancel">Cancel</button>'}
+        <div class="custom-time-row">
+          <label>Custom</label>
+          <input class="custom-time-input" type="number" min="0" max="999" placeholder="min" id="customMin_${todo.id}">
+          <span class="custom-time-sep">:</span>
+          <input class="custom-time-input" type="number" min="0" max="59" placeholder="sec" id="customSec_${todo.id}">
+          <button class="custom-time-go">Set</button>
+        </div>`;
       picker.querySelectorAll('.preset-btn').forEach((btn,i) => {
         btn.addEventListener('click', (e) => { e.stopPropagation(); setCountdown(todo.id, presets[i]); });
       });
@@ -1048,6 +1084,23 @@
         if (hasCountdown) clearCountdown(todo.id);
         else { pickerOpenId = null; render(); }
       });
+
+      // Custom time input
+      const customGo = picker.querySelector('.custom-time-go');
+      const customMin = picker.querySelector(`#customMin_${todo.id}`);
+      const customSec = picker.querySelector(`#customSec_${todo.id}`);
+      
+      const applyCustom = () => {
+        const mins = parseInt(customMin.value) || 0;
+        const secs = parseInt(customSec.value) || 0;
+        if (mins > 0 || secs > 0) setCountdown(todo.id, mins, secs);
+      };
+      
+      customGo.addEventListener('click', (e) => { e.stopPropagation(); applyCustom(); });
+      customMin.addEventListener('click', (e) => e.stopPropagation());
+      customSec.addEventListener('click', (e) => e.stopPropagation());
+      customMin.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') applyCustom(); });
+      customSec.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') applyCustom(); });
       wrapper.appendChild(picker);
     }
 
