@@ -444,6 +444,10 @@
   } catch { speechSupported = false; }
 
   function speak(text) {
+    // Always play beeps — works on every device
+    playBeepAnnouncement(text);
+
+    // Also try speech as a bonus (works on desktop, not on most TVs)
     if (speechSupported) {
       try {
         const utter = new SpeechSynthesisUtterance(text);
@@ -453,16 +457,8 @@
           || voices.find(v => v.lang === 'en-US' && v.localService);
         if (pref) utter.voice = pref;
         speechSynthesis.speak(utter);
-        // Test if it actually worked
-        setTimeout(() => {
-          if (speechSynthesis.speaking || speechSynthesis.pending) return;
-          // If nothing happened, fallback
-        }, 200);
-        return;
       } catch {}
     }
-    // Fallback: beep patterns
-    playBeepAnnouncement(text);
   }
 
   // ---- Audio ----
