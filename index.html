@@ -7,33 +7,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
-    height: 100vh;
-    background: #050507;
+    height: 100vh; background: #050507;
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    color: #fff;
-    overflow: hidden;
+    color: #fff; overflow: hidden;
   }
-
   .glow-tr {
-    position: fixed; top: -200px; right: -200px;
-    width: 600px; height: 600px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,138,61,.06) 0%, transparent 70%);
-    pointer-events: none;
+    position: fixed; top: -200px; right: -200px; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,138,61,.06) 0%, transparent 70%); pointer-events: none;
   }
   .glow-bl {
-    position: fixed; bottom: -300px; left: -200px;
-    width: 700px; height: 700px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,107,26,.04) 0%, transparent 70%);
-    pointer-events: none;
+    position: fixed; bottom: -300px; left: -200px; width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,26,.04) 0%, transparent 70%); pointer-events: none;
   }
-
   .layout { display: flex; height: 100vh; position: relative; z-index: 1; }
 
   /* Sidebar */
   .sidebar {
-    width: 280px; min-width: 280px; padding: 64px 40px;
+    width: 280px; min-width: 280px; padding: 56px 36px;
     display: flex; flex-direction: column;
     border-right: 1px solid rgba(255,255,255,.04);
   }
@@ -60,7 +51,24 @@
   .today-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
   .today-btn.hidden { display: none; }
 
+  /* Sidebar nav buttons */
+  .sidebar-nav { display: flex; flex-direction: column; gap: 6px; margin-top: 28px; }
+  .sidebar-nav-btn {
+    background: rgba(255,255,255,.03); border: none; color: rgba(255,255,255,.35);
+    padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit; text-align: left;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-nav-btn:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.6); }
+  .sidebar-nav-btn.active { background: rgba(255,138,61,.08); color: #FF8A3D; }
+  .sidebar-nav-btn svg { flex-shrink: 0; }
+
   .sidebar-spacer { flex: 1; }
+
+  .carryover-notice {
+    font-size: 13px; font-weight: 500; color: #FF8A3D;
+    padding: 10px 0; opacity: .8;
+  }
 
   .total-time-section { margin-bottom: 28px; }
   .total-time-label {
@@ -68,8 +76,7 @@
     letter-spacing: 2px; color: rgba(255,255,255,.2); margin-bottom: 6px;
   }
   .total-time-value {
-    font-size: 36px; font-weight: 800; letter-spacing: -1px;
-    font-variant-numeric: tabular-nums;
+    font-size: 36px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums;
     background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
@@ -130,7 +137,6 @@
     margin-top: 16px; padding-left: 4px;
   }
 
-  /* Todo item wrapper */
   .todo-wrapper { flex-shrink: 0; }
 
   .todo-item {
@@ -178,14 +184,10 @@
   .todo-text { font-size: 22px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
-  /* Timer inline */
-  .timer-inline {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .timer-inline { display: flex; align-items: center; gap: 10px; }
   .timer-countdown {
     font-size: 18px; font-weight: 700; color: rgba(255,255,255,.4);
-    font-variant-numeric: tabular-nums; letter-spacing: .5px;
-    min-width: 60px; text-align: right;
+    font-variant-numeric: tabular-nums; letter-spacing: .5px; min-width: 60px; text-align: right;
   }
   .timer-countdown.active { color: #FF8A3D; }
   .timer-countdown.warning { color: #ff4444; }
@@ -200,8 +202,7 @@
   .timer-play-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
   .timer-play-btn.active {
     border-color: #FF8A3D; color: #FF8A3D;
-    background: rgba(255,138,61,.1);
-    animation: pulse 2s infinite;
+    background: rgba(255,138,61,.1); animation: pulse 2s infinite;
   }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255,138,61,.2); }
@@ -213,19 +214,14 @@
     color: rgba(255,255,255,.3); height: 44px; padding: 0 16px;
     border-radius: 12px; cursor: pointer; display: flex;
     align-items: center; justify-content: center; gap: 6px;
-    transition: all .2s; font-family: inherit; font-size: 14px; font-weight: 600;
-    flex-shrink: 0;
+    transition: all .2s; font-family: inherit; font-size: 14px; font-weight: 600; flex-shrink: 0;
   }
   .timer-set-btn:hover { border-color: #FF8A3D; color: #FF8A3D; background: rgba(255,138,61,.06); }
-  .timer-set-btn.has-countdown { color: rgba(255,255,255,.5); }
 
-  /* Preset picker panel */
   .timer-picker {
     display: flex; align-items: center; gap: 8px;
     padding: 14px 24px; margin-top: 6px;
-    background: rgba(255,255,255,.02);
-    border-radius: 14px;
-    flex-wrap: wrap;
+    background: rgba(255,255,255,.02); border-radius: 14px; flex-wrap: wrap;
   }
   .timer-picker-label {
     font-size: 13px; font-weight: 600; color: rgba(255,255,255,.25);
@@ -238,27 +234,17 @@
     font-size: 16px; font-weight: 700; transition: all .15s;
     display: flex; align-items: center; justify-content: center;
   }
-  .preset-btn:hover {
-    background: rgba(255,138,61,.12); border-color: #FF8A3D;
-    color: #FF8A3D; transform: scale(1.05);
-  }
-  .preset-btn.selected {
-    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
-    border-color: transparent; color: #050507;
-  }
+  .preset-btn:hover { background: rgba(255,138,61,.12); border-color: #FF8A3D; color: #FF8A3D; transform: scale(1.05); }
+  .preset-btn.selected { background: linear-gradient(135deg, #FF8A3D, #FF6B1A); border-color: transparent; color: #050507; }
   .preset-cancel {
     background: none; border: 1.5px solid rgba(255,255,255,.06);
     color: rgba(255,255,255,.25); height: 46px; padding: 0 16px;
     border-radius: 12px; cursor: pointer; font-family: inherit;
-    font-size: 14px; font-weight: 600; transition: all .15s;
-    margin-left: auto;
+    font-size: 14px; font-weight: 600; transition: all .15s; margin-left: auto;
   }
   .preset-cancel:hover { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.5); }
 
-  .done-time {
-    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3);
-    font-variant-numeric: tabular-nums;
-  }
+  .done-time { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3); font-variant-numeric: tabular-nums; }
 
   .remove-btn {
     background: none; border: none; color: #fff; font-size: 26px;
@@ -266,6 +252,73 @@
     padding: 4px 8px; font-family: inherit;
   }
   .remove-btn:hover { opacity: 1; }
+
+  /* Recurring / Archive items */
+  .template-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 24px; background: rgba(255,255,255,.03);
+    border-radius: 14px; transition: all .2s;
+  }
+  .template-item:hover { background: rgba(255,255,255,.06); }
+  .template-item .todo-text { font-size: 20px; }
+  .template-add-btn {
+    background: rgba(255,138,61,.1); border: 1.5px solid rgba(255,138,61,.2);
+    color: #FF8A3D; height: 40px; padding: 0 20px;
+    border-radius: 10px; cursor: pointer; font-family: inherit;
+    font-size: 14px; font-weight: 700; transition: all .15s; flex-shrink: 0;
+  }
+  .template-add-btn:hover { background: rgba(255,138,61,.2); border-color: #FF8A3D; }
+  .template-remove-btn {
+    background: none; border: none; color: #fff; font-size: 22px;
+    cursor: pointer; opacity: .15; transition: opacity .2s;
+    padding: 4px 8px; font-family: inherit;
+  }
+  .template-remove-btn:hover { opacity: 1; }
+
+  .archive-date {
+    font-size: 15px; font-weight: 700; color: rgba(255,255,255,.3);
+    margin-top: 20px; margin-bottom: 8px; padding-left: 4px;
+  }
+  .archive-date:first-child { margin-top: 0; }
+  .archive-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 24px; background: rgba(255,255,255,.02);
+    border-radius: 12px; opacity: .5;
+  }
+  .archive-item .todo-text { font-size: 18px; text-decoration: line-through; }
+
+  /* Panel header */
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 0 24px;
+  }
+  .panel-title { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+  .panel-back {
+    background: rgba(255,255,255,.06); border: none; color: rgba(255,255,255,.5);
+    padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .2s;
+  }
+  .panel-back:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+  /* Add recurring input */
+  .add-recurring {
+    display: flex; gap: 12px; align-items: center; margin-top: 16px;
+  }
+  .add-recurring input {
+    flex: 1; padding: 16px 20px; font-size: 18px; font-weight: 500;
+    color: #fff; background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 12px;
+    outline: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: border-color .2s;
+  }
+  .add-recurring input:focus { border-color: rgba(255,138,61,.3); }
+  .add-recurring input::placeholder { color: rgba(255,255,255,.2); }
+  .add-recurring button {
+    padding: 16px 28px; font-size: 16px; font-weight: 700;
+    color: #050507; background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    border: none; border-radius: 12px; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; transition: all .2s;
+  }
+  .add-recurring button:hover { background: linear-gradient(135deg, #FF9B57, #FF8A3D); }
 
   /* Input */
   .input-area {
@@ -283,13 +336,11 @@
   }
   .input-area input:focus { border-color: rgba(255,138,61,.3); }
   .input-area input::placeholder { color: rgba(255,255,255,.2); }
-
   .add-btn {
     padding: 20px 36px; font-size: 18px; font-weight: 700;
     color: #050507; background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
     border: none; border-radius: 14px; cursor: pointer;
-    transition: all .2s; font-family: 'Plus Jakarta Sans', sans-serif;
-    letter-spacing: -.3px;
+    transition: all .2s; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -.3px;
   }
   .add-btn:hover { background: linear-gradient(135deg, #FF9B57, #FF8A3D); }
 </style>
@@ -308,6 +359,21 @@
       <button class="date-nav-btn" id="nextDay">&rarr;</button>
       <button class="today-btn hidden" id="todayBtn">Today</button>
     </div>
+    <div class="sidebar-nav">
+      <button class="sidebar-nav-btn active" id="navTasks">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Tasks
+      </button>
+      <button class="sidebar-nav-btn" id="navRecurring">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Recurring
+      </button>
+      <button class="sidebar-nav-btn" id="navArchive">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+        Archive
+      </button>
+    </div>
+    <div class="carryover-notice" id="carryoverNotice" style="display:none"></div>
     <div class="sidebar-spacer"></div>
     <div class="total-time-section">
       <div class="total-time-label">Time today</div>
@@ -348,12 +414,16 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const todosCol = collection(db, 'tv_todos');
+  const recurringCol = collection(db, 'recurring_tasks');
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   let todos = [];
+  let recurringTasks = [];
+  let archiveTasks = [];
   let currentDate = new Date();
+  let currentView = 'tasks'; // tasks | recurring | archive
   let dragSrcId = null;
   let loading = false;
 
@@ -363,23 +433,37 @@
   let pickerOpenId = null;
   let announcedMilestones = new Set();
 
-  // ---- Voice ----
+  // ---- Voice with beep fallback ----
+  let speechSupported = false;
+  try {
+    speechSupported = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+    if (speechSupported) {
+      speechSynthesis.getVoices();
+      speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    }
+  } catch { speechSupported = false; }
+
   function speak(text) {
-    try {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 1.1;
-      utter.pitch = 1.0;
-      utter.volume = 1;
-      const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.name.includes('Samantha'))
-        || voices.find(v => v.name.includes('Alex'))
-        || voices.find(v => v.lang === 'en-US' && v.localService);
-      if (preferred) utter.voice = preferred;
-      speechSynthesis.speak(utter);
-    } catch {}
+    if (speechSupported) {
+      try {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1.1; utter.volume = 1;
+        const voices = speechSynthesis.getVoices();
+        const pref = voices.find(v => v.name.includes('Samantha'))
+          || voices.find(v => v.lang === 'en-US' && v.localService);
+        if (pref) utter.voice = pref;
+        speechSynthesis.speak(utter);
+        // Test if it actually worked
+        setTimeout(() => {
+          if (speechSynthesis.speaking || speechSynthesis.pending) return;
+          // If nothing happened, fallback
+        }, 200);
+        return;
+      } catch {}
+    }
+    // Fallback: beep patterns
+    playBeepAnnouncement(text);
   }
-  speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
 
   // ---- Audio ----
   let audioCtx = null;
@@ -388,62 +472,51 @@
     return audioCtx;
   }
 
-  function playTick() {
+  function beep(freq, duration, delay = 0, vol = 0.15) {
     try {
       const ctx = getAudio();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = 800; osc.type = 'sine';
-      gain.gain.setValueAtTime(0.03, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
+      osc.frequency.value = freq; osc.type = 'sine';
+      const t = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+      osc.start(t); osc.stop(t + duration);
     } catch {}
+  }
+
+  function playBeepAnnouncement(text) {
+    if (text === "Time's up") {
+      // Alarm: 6 rapid high beeps
+      [880,1100,880,1100,880,1320].forEach((f,i) => beep(f, 0.15, i*0.18, 0.2));
+      return;
+    }
+    const num = parseInt(text);
+    if (text.includes('thirty')) {
+      // Midpoint: two quick soft beeps
+      beep(700, 0.1, 0, 0.08); beep(700, 0.1, 0.15, 0.08);
+    } else if (text.includes('minutes')) {
+      // Minute milestones: distinct patterns
+      const mins = parseInt(text);
+      if (mins === 15) { beep(800,.15,0); beep(1000,.15,.2); beep(1200,.15,.4); beep(1000,.15,.6); }
+      else if (mins === 10) { beep(900,.15,0); beep(1100,.15,.2); beep(900,.15,.4); }
+      else if (mins === 5) { [0,1,2,3,4].forEach(i => beep(1000,.1,i*.12)); }
+      else if (mins === 2) { beep(1200,.2,0); beep(1200,.2,.3); }
+      else { beep(800,.12,0); beep(1000,.12,.15); } // generic 5-min marks
+    } else if (!isNaN(num)) {
+      // Countdown seconds: single beep, pitch rises as number decreases
+      const pitch = 600 + (20 - num) * 40;
+      beep(pitch, 0.12, 0, 0.12);
+    }
   }
 
   function playStart() {
-    try {
-      const ctx = getAudio();
-      [600, 900].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value = freq; osc.type = 'sine';
-        const t = ctx.currentTime + i * 0.1;
-        gain.gain.setValueAtTime(0.12, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-        osc.start(t); osc.stop(t + 0.15);
-      });
-    } catch {}
+    beep(600, 0.12, 0, 0.12); beep(900, 0.12, 0.1, 0.12);
   }
-
-  function playStop() {
-    try {
-      const ctx = getAudio();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = 500; osc.type = 'sine';
-      gain.gain.setValueAtTime(0.1, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
-    } catch {}
-  }
-
+  function playStop() { beep(500, 0.18, 0, 0.1); }
   function playAlarm() {
-    try {
-      const ctx = getAudio();
-      [880, 1100, 880, 1100, 880, 1320].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value = freq; osc.type = 'sine';
-        const t = ctx.currentTime + i * 0.18;
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
-        osc.start(t); osc.stop(t + 0.16);
-      });
-    } catch {}
+    [880,1100,880,1100,880,1320].forEach((f,i) => beep(f, 0.15, i*0.18, 0.2));
   }
 
   // ---- Helpers ----
@@ -460,6 +533,11 @@
     const sec = s % 60;
     if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     return `${m}:${String(sec).padStart(2,'0')}`;
+  }
+
+  function fmtDateLabel(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
   }
 
   function getActiveElapsed() {
@@ -497,33 +575,46 @@
         el.textContent = fmtTime(remaining);
         el.classList.toggle('warning', remaining <= 30 && remaining > 0);
 
-        // Voice: minute milestones
-        const remainingMins = Math.floor(remaining / 60);
-        const secsIntoMin = remainingSecs % 60;
         for (const m of [15, 10, 5, 2]) {
           const key = `min-${m}`;
-          if (remainingMins === m && secsIntoMin === 0 && !announcedMilestones.has(key)) {
+          if (Math.floor(remaining / 60) === m && remainingSecs % 60 === 0 && !announcedMilestones.has(key)) {
             announcedMilestones.add(key);
             speak(`${m} minutes`);
           }
         }
 
-        // Voice: countdown 20 to 0
+        // Every 5-min mark (except ones already announced above)
+        if (remainingSecs > 20 && remainingSecs % 300 === 0) {
+          const mins = remainingSecs / 60;
+          const key = `5min-${mins}`;
+          if (!announcedMilestones.has(key) && ![15,10,5,2].includes(mins)) {
+            announcedMilestones.add(key);
+            speak(`${mins} minutes`);
+          }
+        }
+
+        // Midpoint between 5-min marks (every 2:30)
+        if (remainingSecs > 20 && remainingSecs % 300 === 150) {
+          const key = `mid-${remainingSecs}`;
+          if (!announcedMilestones.has(key)) {
+            announcedMilestones.add(key);
+            const mins = Math.floor(remainingSecs / 60);
+            const secs = remainingSecs % 60;
+            speak(`${mins} thirty`);
+          }
+        }
         if (remainingSecs <= 20 && remainingSecs >= 0) {
           const key = `sec-${remainingSecs}`;
           if (!announcedMilestones.has(key)) {
             announcedMilestones.add(key);
-            if (remainingSecs === 0) speak("Time's up");
-            else speak(`${remainingSecs}`);
+            speak(remainingSecs === 0 ? "Time's up" : `${remainingSecs}`);
           }
         }
-
         if (remaining <= 0) {
           playAlarm();
           const itemEl = document.querySelector(`.todo-wrapper[data-id="${activeTimerId}"] .todo-item`);
           if (itemEl) itemEl.classList.add('countdown-done');
-          stopTimer();
-          return;
+          stopTimer(); return;
         }
       } else {
         el.textContent = fmtTime(elapsed);
@@ -534,10 +625,8 @@
 
   function startTimer(id) {
     if (activeTimerId) stopTimer(false);
-    activeTimerId = id;
-    timerStartedAt = Date.now();
-    announcedMilestones = new Set();
-    pickerOpenId = null;
+    activeTimerId = id; timerStartedAt = Date.now();
+    announcedMilestones = new Set(); pickerOpenId = null;
     playStart();
     tickInterval = setInterval(updateActiveTimerDisplay, 1000);
     render();
@@ -546,50 +635,60 @@
   async function stopTimer(doRender = true) {
     if (!activeTimerId || !timerStartedAt) {
       activeTimerId = null; timerStartedAt = null;
-      if (tickInterval) clearInterval(tickInterval);
-      tickInterval = null;
-      return;
+      if (tickInterval) clearInterval(tickInterval); tickInterval = null; return;
     }
     const elapsed = getActiveElapsed();
     const todo = todos.find(t => t.id === activeTimerId);
     const id = activeTimerId;
     activeTimerId = null; timerStartedAt = null;
-    if (tickInterval) clearInterval(tickInterval);
-    tickInterval = null;
+    if (tickInterval) clearInterval(tickInterval); tickInterval = null;
     if (todo) {
       todo.timeSpent = (todo.timeSpent || 0) + elapsed;
       playStop();
-      try { await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent }); }
-      catch (e) { console.error('Timer save error:', e); }
+      try { await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent }); } catch {}
     }
     if (doRender) render();
   }
 
   function toggleTimer(id) {
-    if (activeTimerId === id) stopTimer();
-    else startTimer(id);
+    if (activeTimerId === id) stopTimer(); else startTimer(id);
   }
 
   async function setCountdown(id, minutes) {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
-    todo.countdownSecs = minutes * 60;
-    todo.timeSpent = 0;
-    announcedMilestones = new Set();
-    pickerOpenId = null;
+    todo.countdownSecs = minutes * 60; todo.timeSpent = 0;
+    announcedMilestones = new Set(); pickerOpenId = null;
     render();
-    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 }); }
-    catch (e) { console.error('Set countdown error:', e); }
+    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 }); } catch {}
   }
 
   async function clearCountdown(id) {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
-    todo.countdownSecs = 0;
-    pickerOpenId = null;
-    render();
-    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: 0 }); }
-    catch (e) { console.error('Clear countdown error:', e); }
+    todo.countdownSecs = 0; pickerOpenId = null; render();
+    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: 0 }); } catch {}
+  }
+
+  // ---- Auto carry-over ----
+  async function carryOverIncompleteTasks() {
+    const tk = todayKey();
+    try {
+      const q = query(todosCol, where('done', '==', false), where('date', '<', tk));
+      const snap = await getDocs(q);
+      if (snap.empty) return 0;
+      const batch = writeBatch(db);
+      const maxPos = todos.length > 0 ? Math.max(...todos.map(t => t.position)) + 1 : 0;
+      let count = 0;
+      snap.docs.forEach((d, i) => {
+        batch.update(doc(db, 'tv_todos', d.id), { date: tk, position: maxPos + i, timeSpent: 0, countdownSecs: 0 });
+        const data = { id: d.id, ...d.data(), date: tk, position: maxPos + i, timeSpent: 0, countdownSecs: 0 };
+        todos.push(data);
+        count++;
+      });
+      await batch.commit();
+      return count;
+    } catch (e) { console.error('Carry-over error:', e); return 0; }
   }
 
   // ---- Firebase CRUD ----
@@ -601,7 +700,19 @@
       const snap = await getDocs(q);
       todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (e) { console.error('Load error:', e); todos = []; }
-    loading = false; render();
+    loading = false;
+
+    // Auto carry-over when viewing today
+    if (isToday()) {
+      const carried = await carryOverIncompleteTasks();
+      if (carried > 0) {
+        const notice = document.getElementById('carryoverNotice');
+        notice.textContent = `${carried} task${carried > 1 ? 's' : ''} carried over`;
+        notice.style.display = 'block';
+        setTimeout(() => notice.style.display = 'none', 5000);
+      }
+    }
+    render();
   }
 
   async function addTodoItem(text) {
@@ -620,29 +731,24 @@
     if (activeTimerId === id) await stopTimer(false);
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
-    todo.done = !todo.done;
-    render();
-    try { await updateDoc(doc(db, 'tv_todos', id), { done: todo.done }); }
-    catch (e) { console.error('Toggle error:', e); }
+    todo.done = !todo.done; render();
+    try { await updateDoc(doc(db, 'tv_todos', id), { done: todo.done }); } catch {}
   }
 
   async function removeTodo(id) {
     if (activeTimerId === id) await stopTimer(false);
-    todos = todos.filter(t => t.id !== id);
-    render();
-    try { await deleteDoc(doc(db, 'tv_todos', id)); }
-    catch (e) { console.error('Remove error:', e); }
+    todos = todos.filter(t => t.id !== id); render();
+    try { await deleteDoc(doc(db, 'tv_todos', id)); } catch {}
   }
 
   async function clearCompleted() {
     const done = todos.filter(t => t.done);
-    todos = todos.filter(t => !t.done);
-    render();
+    todos = todos.filter(t => !t.done); render();
     try {
       const batch = writeBatch(db);
       done.forEach(t => batch.delete(doc(db, 'tv_todos', t.id)));
       await batch.commit();
-    } catch (e) { console.error('Clear error:', e); }
+    } catch {}
   }
 
   async function savePositions() {
@@ -650,7 +756,58 @@
       const batch = writeBatch(db);
       todos.forEach((t, i) => batch.update(doc(db, 'tv_todos', t.id), { position: i }));
       await batch.commit();
-    } catch (e) { console.error('Position error:', e); }
+    } catch {}
+  }
+
+  // ---- Recurring ----
+  async function loadRecurring() {
+    try {
+      const snap = await getDocs(query(recurringCol, orderBy('createdAt')));
+      recurringTasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch { recurringTasks = []; }
+  }
+
+  async function addRecurring(text) {
+    try {
+      const ref = await addDoc(recurringCol, { text, createdAt: new Date().toISOString() });
+      recurringTasks.push({ id: ref.id, text });
+      render();
+    } catch {}
+  }
+
+  async function removeRecurring(id) {
+    recurringTasks = recurringTasks.filter(t => t.id !== id); render();
+    try { await deleteDoc(doc(db, 'recurring_tasks', id)); } catch {}
+  }
+
+  async function addRecurringToToday(text) {
+    await addTodoItem(text);
+    switchView('tasks');
+  }
+
+  // ---- Archive ----
+  async function loadArchive() {
+    try {
+      const q = query(todosCol, where('done', '==', true), orderBy('date'));
+      const snap = await getDocs(q);
+      archiveTasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Sort newest first
+      archiveTasks.reverse();
+    } catch { archiveTasks = []; }
+  }
+
+  // ---- Navigation ----
+  function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(view === 'tasks' ? 'navTasks' : view === 'recurring' ? 'navRecurring' : 'navArchive').classList.add('active');
+
+    const inputArea = document.getElementById('inputArea');
+    inputArea.style.display = view === 'tasks' ? 'flex' : 'none';
+
+    if (view === 'recurring') { loadRecurring().then(render); }
+    else if (view === 'archive') { loadArchive().then(render); }
+    else { render(); }
   }
 
   function shiftDate(days) {
@@ -667,15 +824,21 @@
     document.getElementById('dayName').textContent = DAYS[currentDate.getDay()];
     document.getElementById('dateSub').textContent = `${MONTHS[currentDate.getMonth()]} ${currentDate.getDate()}`;
     const todayBtn = document.getElementById('todayBtn');
-    if (isToday()) todayBtn.classList.add('hidden');
-    else todayBtn.classList.remove('hidden');
+    if (isToday()) todayBtn.classList.add('hidden'); else todayBtn.classList.remove('hidden');
   }
 
   const playSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>`;
   const pauseSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>`;
   const clockSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 
+  // ---- Render ----
   function render() {
+    if (currentView === 'recurring') return renderRecurring();
+    if (currentView === 'archive') return renderArchive();
+    renderTasks();
+  }
+
+  function renderTasks() {
     const list = document.getElementById('list');
     const progressTrack = document.getElementById('progressTrack');
     const progressFill = document.getElementById('progressFill');
@@ -685,10 +848,8 @@
 
     if (loading) {
       list.innerHTML = '<div class="loading">Loading...</div>';
-      progressTrack.classList.remove('visible');
-      progressInfo.textContent = '';
-      clearBtn.classList.remove('visible');
-      return;
+      progressTrack.classList.remove('visible'); progressInfo.textContent = '';
+      clearBtn.classList.remove('visible'); return;
     }
 
     const doneCount = todos.filter(t => t.done).length;
@@ -697,10 +858,7 @@
       progressTrack.classList.add('visible');
       progressFill.style.width = `${(doneCount / total) * 100}%`;
       progressInfo.textContent = `${doneCount}/${total} done`;
-    } else {
-      progressTrack.classList.remove('visible');
-      progressInfo.textContent = '';
-    }
+    } else { progressTrack.classList.remove('visible'); progressInfo.textContent = ''; }
     clearBtn.classList.toggle('visible', doneCount > 0);
     list.innerHTML = '';
 
@@ -714,11 +872,96 @@
     pending.forEach(todo => list.appendChild(buildItem(todo)));
     if (done.length > 0) {
       const label = document.createElement('div');
-      label.className = 'section-label';
-      label.textContent = 'Completed';
+      label.className = 'section-label'; label.textContent = 'Completed';
       list.appendChild(label);
       done.forEach(todo => list.appendChild(buildItem(todo)));
     }
+  }
+
+  function renderRecurring() {
+    const list = document.getElementById('list');
+    document.getElementById('progressTrack').classList.remove('visible');
+    document.getElementById('progressInfo').textContent = '';
+    document.getElementById('clearBtn').classList.remove('visible');
+    list.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'panel-header';
+    header.innerHTML = `<div class="panel-title">Recurring Tasks</div>`;
+    list.appendChild(header);
+
+    if (recurringTasks.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty'; empty.style.padding = '60px 0';
+      empty.innerHTML = `<div class="empty-text">No recurring tasks yet</div>`;
+      list.appendChild(empty);
+    }
+
+    recurringTasks.forEach(task => {
+      const el = document.createElement('div');
+      el.className = 'template-item';
+      el.innerHTML = `
+        <span class="todo-text">${escHtml(task.text)}</span>
+        <button class="template-add-btn">+ Today</button>
+        <button class="template-remove-btn">&times;</button>`;
+      el.querySelector('.template-add-btn').addEventListener('click', () => addRecurringToToday(task.text));
+      el.querySelector('.template-remove-btn').addEventListener('click', () => removeRecurring(task.id));
+      list.appendChild(el);
+    });
+
+    const addArea = document.createElement('div');
+    addArea.className = 'add-recurring';
+    addArea.innerHTML = `<input type="text" placeholder="New recurring task..."><button>Add</button>`;
+    const inp = addArea.querySelector('input');
+    const btn = addArea.querySelector('button');
+    const doAdd = () => { const t = inp.value.trim(); if (t) { addRecurring(t); inp.value = ''; } };
+    btn.addEventListener('click', doAdd);
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
+    list.appendChild(addArea);
+  }
+
+  function renderArchive() {
+    const list = document.getElementById('list');
+    document.getElementById('progressTrack').classList.remove('visible');
+    document.getElementById('progressInfo').textContent = '';
+    document.getElementById('clearBtn').classList.remove('visible');
+    list.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'panel-header';
+    header.innerHTML = `<div class="panel-title">Archive</div>`;
+    list.appendChild(header);
+
+    if (archiveTasks.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty'; empty.style.padding = '60px 0';
+      empty.innerHTML = `<div class="empty-text">No completed tasks yet</div>`;
+      list.appendChild(empty);
+      return;
+    }
+
+    // Group by date
+    const grouped = {};
+    archiveTasks.forEach(t => {
+      if (!grouped[t.date]) grouped[t.date] = [];
+      grouped[t.date].push(t);
+    });
+
+    Object.keys(grouped).forEach(date => {
+      const label = document.createElement('div');
+      label.className = 'archive-date';
+      label.textContent = date === todayKey() ? 'Today' : fmtDateLabel(date);
+      list.appendChild(label);
+
+      grouped[date].forEach(task => {
+        const el = document.createElement('div');
+        el.className = 'archive-item';
+        el.innerHTML = `
+          <span class="todo-text">${escHtml(task.text)}</span>
+          ${(task.timeSpent || 0) > 0 ? `<span class="done-time">${fmtTime(task.timeSpent)}</span>` : ''}`;
+        list.appendChild(el);
+      });
+    });
   }
 
   function buildItem(todo) {
@@ -734,41 +977,31 @@
       const remaining = Math.max(0, todo.countdownSecs - elapsed);
       countdownText = fmtTime(remaining);
       if (remaining <= 30 && remaining > 0 && isActive) isWarning = true;
-    } else if (elapsed > 0) {
-      countdownText = fmtTime(elapsed);
-    }
+    } else if (elapsed > 0) { countdownText = fmtTime(elapsed); }
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'todo-wrapper';
-    wrapper.dataset.id = todo.id;
+    wrapper.className = 'todo-wrapper'; wrapper.dataset.id = todo.id;
 
     const el = document.createElement('div');
     el.className = 'todo-item' + (todo.done ? ' done' : '') + (isActive ? ' timing' : '');
     el.dataset.id = todo.id;
     if (!todo.done) el.draggable = true;
 
-    // Timer section for pending items
     let timerHTML = '';
     if (!todo.done) {
-      const countdownDisplay = countdownText
-        ? `<span class="timer-countdown ${isActive ? 'active' : ''} ${isWarning ? 'warning' : ''}">${countdownText}</span>`
-        : '';
-
-      const setLabel = hasCountdown ? `${Math.floor(todo.countdownSecs / 60)}m` : '';
-      const setBtnHTML = `<button class="timer-set-btn ${hasCountdown ? 'has-countdown' : ''}">${clockSVG}${setLabel ? `<span>${setLabel}</span>` : ''}</button>`;
-
-      timerHTML = `
-        <div class="timer-inline">
-          ${countdownDisplay}
-          ${setBtnHTML}
-          <button class="timer-play-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>
-        </div>`;
+      const cd = countdownText ? `<span class="timer-countdown ${isActive?'active':''} ${isWarning?'warning':''}">${countdownText}</span>` : '';
+      const setLabel = hasCountdown ? `${Math.floor(todo.countdownSecs/60)}m` : '';
+      timerHTML = `<div class="timer-inline">
+        ${cd}
+        <button class="timer-set-btn">${clockSVG}${setLabel ? `<span>${setLabel}</span>` : ''}</button>
+        <button class="timer-play-btn ${isActive?'active':''}">${isActive ? pauseSVG : playSVG}</button>
+      </div>`;
     } else if (hasTime) {
       timerHTML = `<span class="done-time">${fmtTime(elapsed)}</span>`;
     }
 
     el.innerHTML = `
-      <div class="drag-handle" ${todo.done ? 'style="opacity:0;pointer-events:none"' : ''}>
+      <div class="drag-handle" ${todo.done?'style="opacity:0;pointer-events:none"':''}>
         <span></span><span></span><span></span>
       </div>
       <div class="checkbox">
@@ -780,88 +1013,58 @@
       ${timerHTML}
       <button class="remove-btn">&times;</button>`;
 
-    // Checkbox click
     el.addEventListener('click', (e) => {
       if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')
         || e.target.closest('.timer-play-btn') || e.target.closest('.timer-set-btn')) return;
       toggleTodo(todo.id);
     });
 
-    el.querySelector('.remove-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeTodo(todo.id);
-    });
+    el.querySelector('.remove-btn').addEventListener('click', (e) => { e.stopPropagation(); removeTodo(todo.id); });
 
-    // Set timer button → toggle picker
     const setBtn = el.querySelector('.timer-set-btn');
     if (setBtn) {
       setBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (isActive) return;
-        pickerOpenId = showPicker ? null : todo.id;
-        render();
+        pickerOpenId = showPicker ? null : todo.id; render();
       });
     }
 
-    // Play/pause
     const playBtn = el.querySelector('.timer-play-btn');
-    if (playBtn) {
-      playBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleTimer(todo.id);
-      });
-    }
+    if (playBtn) { playBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleTimer(todo.id); }); }
 
     wrapper.appendChild(el);
 
-    // Preset picker panel
     if (showPicker && !todo.done) {
       const picker = document.createElement('div');
       picker.className = 'timer-picker';
-
-      const presets = [5, 10, 15, 20, 25, 30, 45, 60];
-      const currentMins = hasCountdown ? Math.floor(todo.countdownSecs / 60) : 0;
-
+      const presets = [5,10,15,20,25,30,45,60];
+      const curMins = hasCountdown ? Math.floor(todo.countdownSecs/60) : 0;
       picker.innerHTML = `
         <span class="timer-picker-label">Set</span>
-        ${presets.map(m =>
-          `<button class="preset-btn ${currentMins === m ? 'selected' : ''}">${m >= 60 ? `${m/60}h` : `${m}m`}</button>`
-        ).join('')}
-        ${hasCountdown ? '<button class="preset-cancel">Clear</button>' : '<button class="preset-cancel">Cancel</button>'}
-      `;
-
-      picker.querySelectorAll('.preset-btn').forEach((btn, i) => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setCountdown(todo.id, presets[i]);
-        });
+        ${presets.map(m => `<button class="preset-btn ${curMins===m?'selected':''}">${m>=60?`${m/60}h`:`${m}m`}</button>`).join('')}
+        ${hasCountdown ? '<button class="preset-cancel">Clear</button>' : '<button class="preset-cancel">Cancel</button>'}`;
+      picker.querySelectorAll('.preset-btn').forEach((btn,i) => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); setCountdown(todo.id, presets[i]); });
       });
-
       picker.querySelector('.preset-cancel').addEventListener('click', (e) => {
         e.stopPropagation();
         if (hasCountdown) clearCountdown(todo.id);
         else { pickerOpenId = null; render(); }
       });
-
       wrapper.appendChild(picker);
     }
 
     // Drag
     if (!todo.done) {
-      el.addEventListener('dragstart', (e) => {
-        dragSrcId = todo.id; el.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-      el.addEventListener('dragend', () => {
-        el.classList.remove('dragging'); dragSrcId = null; clearDragStyles();
-      });
+      el.addEventListener('dragstart', (e) => { dragSrcId = todo.id; el.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+      el.addEventListener('dragend', () => { el.classList.remove('dragging'); dragSrcId = null; clearDragStyles(); });
       el.addEventListener('dragover', (e) => {
-        e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-        clearDragStyles();
+        e.preventDefault(); e.dataTransfer.dropEffect = 'move'; clearDragStyles();
         const rect = el.getBoundingClientRect();
-        el.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drag-over-above' : 'drag-over-below');
+        el.classList.add(e.clientY < rect.top + rect.height/2 ? 'drag-over-above' : 'drag-over-below');
       });
-      el.addEventListener('dragleave', () => el.classList.remove('drag-over-above', 'drag-over-below'));
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over-above','drag-over-below'));
       el.addEventListener('drop', (e) => {
         e.preventDefault(); clearDragStyles();
         if (!dragSrcId || dragSrcId === todo.id) return;
@@ -871,9 +1074,9 @@
         let insertAt = todos.findIndex(t => t.id === todo.id);
         if (insertAt === -1) insertAt = todos.length;
         const rect = el.getBoundingClientRect();
-        if (e.clientY >= rect.top + rect.height / 2) insertAt++;
+        if (e.clientY >= rect.top + rect.height/2) insertAt++;
         todos.splice(insertAt, 0, item);
-        todos.forEach((t, i) => t.position = i);
+        todos.forEach((t,i) => t.position = i);
         dragSrcId = null; render(); savePositions();
       });
     }
@@ -883,22 +1086,19 @@
 
   function clearDragStyles() {
     document.querySelectorAll('.drag-over-above,.drag-over-below').forEach(el =>
-      el.classList.remove('drag-over-above', 'drag-over-below'));
+      el.classList.remove('drag-over-above','drag-over-below'));
   }
 
-  function escHtml(s) {
-    const d = document.createElement('div');
-    d.textContent = s; return d.innerHTML;
-  }
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
   function handleAdd() {
     const input = document.getElementById('todoInput');
     const text = input.value.trim();
     if (!text) return;
-    addTodoItem(text);
-    input.value = ''; input.focus();
+    addTodoItem(text); input.value = ''; input.focus();
   }
 
+  // ---- Init ----
   updateClock(); updateHeader(); loadTodos();
   setInterval(updateClock, 60000);
 
@@ -908,6 +1108,9 @@
   document.getElementById('prevDay').addEventListener('click', () => shiftDate(-1));
   document.getElementById('nextDay').addEventListener('click', () => shiftDate(1));
   document.getElementById('todayBtn').addEventListener('click', goToday);
+  document.getElementById('navTasks').addEventListener('click', () => switchView('tasks'));
+  document.getElementById('navRecurring').addEventListener('click', () => switchView('recurring'));
+  document.getElementById('navArchive').addEventListener('click', () => switchView('archive'));
 </script>
 
 </body>
