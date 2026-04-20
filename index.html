@@ -130,13 +130,15 @@
     margin-top: 16px; padding-left: 4px;
   }
 
-  /* Todo item */
+  /* Todo item wrapper */
+  .todo-wrapper { flex-shrink: 0; }
+
   .todo-item {
     display: flex; align-items: center; gap: 14px;
     padding: 18px 24px; background: rgba(255,255,255,.03);
     border-radius: 16px; cursor: pointer; transition: background .2s, opacity .2s, transform .15s;
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
-    user-select: none; position: relative; flex-shrink: 0;
+    user-select: none; position: relative;
   }
   .todo-item:hover { background: rgba(255,255,255,.06); }
   .todo-item.done { opacity: .45; }
@@ -176,38 +178,27 @@
   .todo-text { font-size: 22px; font-weight: 500; flex: 1; letter-spacing: -.3px; line-height: 1.4; }
   .todo-item.done .todo-text { text-decoration: line-through; }
 
-  /* Timer controls */
-  .timer-group { display: flex; align-items: center; gap: 6px; }
-
-  .timer-display {
-    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.25);
-    font-variant-numeric: tabular-nums; min-width: 48px; text-align: right;
-    letter-spacing: .5px; cursor: pointer; padding: 4px 6px;
-    border-radius: 6px; transition: all .2s;
+  /* Timer inline */
+  .timer-inline {
+    display: flex; align-items: center; gap: 10px;
   }
-  .timer-display:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.4); }
-  .timer-display.active { color: #FF8A3D; }
-  .timer-display.has-time { color: rgba(255,255,255,.4); }
-  .timer-display.countdown-warning { color: #ff4444; }
-
-  .set-time-input {
-    width: 56px; padding: 4px 6px; font-size: 14px; font-weight: 600;
-    color: #FF8A3D; background: rgba(255,138,61,.08);
-    border: 1px solid rgba(255,138,61,.3); border-radius: 6px;
-    outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
-    text-align: center; font-variant-numeric: tabular-nums;
+  .timer-countdown {
+    font-size: 18px; font-weight: 700; color: rgba(255,255,255,.4);
+    font-variant-numeric: tabular-nums; letter-spacing: .5px;
+    min-width: 60px; text-align: right;
   }
-  .set-time-input::placeholder { color: rgba(255,138,61,.3); }
+  .timer-countdown.active { color: #FF8A3D; }
+  .timer-countdown.warning { color: #ff4444; }
 
-  .timer-btn {
-    background: none; border: 1.5px solid rgba(255,255,255,.12);
-    color: rgba(255,255,255,.35); width: 32px; height: 32px;
+  .timer-play-btn {
+    background: none; border: 2px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.4); width: 44px; height: 44px;
     border-radius: 50%; cursor: pointer; display: flex;
     align-items: center; justify-content: center;
-    transition: all .2s; padding: 0;
+    transition: all .2s; padding: 0; flex-shrink: 0;
   }
-  .timer-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
-  .timer-btn.active {
+  .timer-play-btn:hover { border-color: #FF8A3D; color: #FF8A3D; }
+  .timer-play-btn.active {
     border-color: #FF8A3D; color: #FF8A3D;
     background: rgba(255,138,61,.1);
     animation: pulse 2s infinite;
@@ -217,8 +208,55 @@
     50% { box-shadow: 0 0 0 6px rgba(255,138,61,0); }
   }
 
+  .timer-set-btn {
+    background: rgba(255,255,255,.04); border: 1.5px solid rgba(255,255,255,.1);
+    color: rgba(255,255,255,.3); height: 44px; padding: 0 16px;
+    border-radius: 12px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; gap: 6px;
+    transition: all .2s; font-family: inherit; font-size: 14px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .timer-set-btn:hover { border-color: #FF8A3D; color: #FF8A3D; background: rgba(255,138,61,.06); }
+  .timer-set-btn.has-countdown { color: rgba(255,255,255,.5); }
+
+  /* Preset picker panel */
+  .timer-picker {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 24px; margin-top: 6px;
+    background: rgba(255,255,255,.02);
+    border-radius: 14px;
+    flex-wrap: wrap;
+  }
+  .timer-picker-label {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,.25);
+    margin-right: 4px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .preset-btn {
+    background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.08);
+    color: rgba(255,255,255,.5); height: 46px; min-width: 64px; padding: 0 18px;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    font-size: 16px; font-weight: 700; transition: all .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .preset-btn:hover {
+    background: rgba(255,138,61,.12); border-color: #FF8A3D;
+    color: #FF8A3D; transform: scale(1.05);
+  }
+  .preset-btn.selected {
+    background: linear-gradient(135deg, #FF8A3D, #FF6B1A);
+    border-color: transparent; color: #050507;
+  }
+  .preset-cancel {
+    background: none; border: 1.5px solid rgba(255,255,255,.06);
+    color: rgba(255,255,255,.25); height: 46px; padding: 0 16px;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    font-size: 14px; font-weight: 600; transition: all .15s;
+    margin-left: auto;
+  }
+  .preset-cancel:hover { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.5); }
+
   .done-time {
-    font-size: 13px; font-weight: 600; color: rgba(255,255,255,.3);
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.3);
     font-variant-numeric: tabular-nums;
   }
 
@@ -319,12 +357,11 @@
   let dragSrcId = null;
   let loading = false;
 
-  // Timer state
   let activeTimerId = null;
   let timerStartedAt = null;
   let tickInterval = null;
-  let editingTimerId = null; // which task is showing the set-time input
-  let announcedMilestones = new Set(); // track which voice callouts have fired
+  let pickerOpenId = null;
+  let announcedMilestones = new Set();
 
   // ---- Voice ----
   function speak(text) {
@@ -333,17 +370,14 @@
       utter.rate = 1.1;
       utter.pitch = 1.0;
       utter.volume = 1;
-      // Try to pick a clean voice
       const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.name.includes('Samantha')) 
+      const preferred = voices.find(v => v.name.includes('Samantha'))
         || voices.find(v => v.name.includes('Alex'))
         || voices.find(v => v.lang === 'en-US' && v.localService);
       if (preferred) utter.voice = preferred;
       speechSynthesis.speak(utter);
     } catch {}
   }
-
-  // Preload voices (Chrome needs this)
   speechSynthesis.getVoices();
   speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
 
@@ -359,41 +393,27 @@
       const ctx = getAudio();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 800;
-      osc.type = 'sine';
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 800; osc.type = 'sine';
       gain.gain.setValueAtTime(0.03, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.08);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
     } catch {}
   }
 
   function playStart() {
     try {
       const ctx = getAudio();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 600;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.15);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.frequency.value = 900;
-      osc2.type = 'sine';
-      gain2.gain.setValueAtTime(0.12, ctx.currentTime + 0.1);
-      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-      osc2.start(ctx.currentTime + 0.1);
-      osc2.stop(ctx.currentTime + 0.25);
+      [600, 900].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        const t = ctx.currentTime + i * 0.1;
+        gain.gain.setValueAtTime(0.12, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        osc.start(t); osc.stop(t + 0.15);
+      });
     } catch {}
   }
 
@@ -402,33 +422,26 @@
       const ctx = getAudio();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 500;
-      osc.type = 'sine';
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 500; osc.type = 'sine';
       gain.gain.setValueAtTime(0.1, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.2);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
     } catch {}
   }
 
   function playAlarm() {
     try {
       const ctx = getAudio();
-      const notes = [880, 1100, 880, 1100, 880, 1320];
-      notes.forEach((freq, i) => {
+      [880, 1100, 880, 1100, 880, 1320].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
         const t = ctx.currentTime + i * 0.18;
         gain.gain.setValueAtTime(0.2, t);
         gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
-        osc.start(t);
-        osc.stop(t + 0.16);
+        osc.start(t); osc.stop(t + 0.16);
       });
     } catch {}
   }
@@ -454,12 +467,6 @@
     return (Date.now() - timerStartedAt) / 1000;
   }
 
-  function getCountdownRemaining(todo) {
-    if (!todo.countdownSecs) return null;
-    const elapsed = (todo.timeSpent || 0) + (todo.id === activeTimerId ? getActiveElapsed() : 0);
-    return Math.max(0, todo.countdownSecs - elapsed);
-  }
-
   function getTotalTime() {
     let total = 0;
     for (const t of todos) {
@@ -481,27 +488,21 @@
     const todo = todos.find(t => t.id === activeTimerId);
     if (!todo) return;
 
-    const el = document.querySelector(`.todo-item[data-id="${activeTimerId}"] .timer-display`);
+    const el = document.querySelector(`.todo-wrapper[data-id="${activeTimerId}"] .timer-countdown`);
     if (el) {
       const elapsed = (todo.timeSpent || 0) + getActiveElapsed();
       if (todo.countdownSecs) {
         const remaining = Math.max(0, todo.countdownSecs - elapsed);
         const remainingSecs = Math.floor(remaining);
         el.textContent = fmtTime(remaining);
-        el.classList.toggle('countdown-warning', remaining <= 30 && remaining > 0);
+        el.classList.toggle('warning', remaining <= 30 && remaining > 0);
 
-        // Voice: minute milestones (15, 10, 5, 2)
+        // Voice: minute milestones
         const remainingMins = Math.floor(remaining / 60);
         const secsIntoMin = remainingSecs % 60;
-        const minuteMilestones = [15, 10, 5, 2];
-        for (const m of minuteMilestones) {
+        for (const m of [15, 10, 5, 2]) {
           const key = `min-${m}`;
           if (remainingMins === m && secsIntoMin === 0 && !announcedMilestones.has(key)) {
-            announcedMilestones.add(key);
-            speak(`${m} minutes`);
-          }
-          // Also catch if we just crossed below the milestone
-          if (remainingSecs <= m * 60 && remainingSecs > (m * 60 - 2) && secsIntoMin === 0 && !announcedMilestones.has(key)) {
             announcedMilestones.add(key);
             speak(`${m} minutes`);
           }
@@ -512,18 +513,14 @@
           const key = `sec-${remainingSecs}`;
           if (!announcedMilestones.has(key)) {
             announcedMilestones.add(key);
-            if (remainingSecs === 0) {
-              speak("Time's up");
-            } else {
-              speak(`${remainingSecs}`);
-            }
+            if (remainingSecs === 0) speak("Time's up");
+            else speak(`${remainingSecs}`);
           }
         }
 
-        // Countdown finished
         if (remaining <= 0) {
           playAlarm();
-          const itemEl = document.querySelector(`.todo-item[data-id="${activeTimerId}"]`);
+          const itemEl = document.querySelector(`.todo-wrapper[data-id="${activeTimerId}"] .todo-item`);
           if (itemEl) itemEl.classList.add('countdown-done');
           stopTimer();
           return;
@@ -533,7 +530,6 @@
       }
     }
     updateTotalTimeDisplay();
-    playTick();
   }
 
   function startTimer(id) {
@@ -541,6 +537,7 @@
     activeTimerId = id;
     timerStartedAt = Date.now();
     announcedMilestones = new Set();
+    pickerOpenId = null;
     playStart();
     tickInterval = setInterval(updateActiveTimerDisplay, 1000);
     render();
@@ -548,30 +545,23 @@
 
   async function stopTimer(doRender = true) {
     if (!activeTimerId || !timerStartedAt) {
-      activeTimerId = null;
-      timerStartedAt = null;
+      activeTimerId = null; timerStartedAt = null;
       if (tickInterval) clearInterval(tickInterval);
       tickInterval = null;
       return;
     }
-
     const elapsed = getActiveElapsed();
     const todo = todos.find(t => t.id === activeTimerId);
     const id = activeTimerId;
-
-    activeTimerId = null;
-    timerStartedAt = null;
+    activeTimerId = null; timerStartedAt = null;
     if (tickInterval) clearInterval(tickInterval);
     tickInterval = null;
-
     if (todo) {
       todo.timeSpent = (todo.timeSpent || 0) + elapsed;
       playStop();
-      try {
-        await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent });
-      } catch (e) { console.error('Timer save error:', e); }
+      try { await updateDoc(doc(db, 'tv_todos', id), { timeSpent: todo.timeSpent }); }
+      catch (e) { console.error('Timer save error:', e); }
     }
-
     if (doRender) render();
   }
 
@@ -586,36 +576,32 @@
     todo.countdownSecs = minutes * 60;
     todo.timeSpent = 0;
     announcedMilestones = new Set();
-    editingTimerId = null;
+    pickerOpenId = null;
     render();
-    try {
-      await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 });
-    } catch (e) { console.error('Set countdown error:', e); }
+    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: todo.countdownSecs, timeSpent: 0 }); }
+    catch (e) { console.error('Set countdown error:', e); }
   }
 
   async function clearCountdown(id) {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
     todo.countdownSecs = 0;
-    editingTimerId = null;
+    pickerOpenId = null;
     render();
-    try {
-      await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: 0 });
-    } catch (e) { console.error('Clear countdown error:', e); }
+    try { await updateDoc(doc(db, 'tv_todos', id), { countdownSecs: 0 }); }
+    catch (e) { console.error('Clear countdown error:', e); }
   }
 
   // ---- Firebase CRUD ----
   async function loadTodos() {
     if (activeTimerId) await stopTimer(false);
-    loading = true;
-    render();
+    loading = true; render();
     try {
       const q = query(todosCol, where('date', '==', dkey(currentDate)), orderBy('position'));
       const snap = await getDocs(q);
       todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (e) { console.error('Load error:', e); todos = []; }
-    loading = false;
-    render();
+    loading = false; render();
   }
 
   async function addTodoItem(text) {
@@ -670,8 +656,7 @@
   function shiftDate(days) {
     currentDate = new Date(currentDate);
     currentDate.setDate(currentDate.getDate() + days);
-    updateHeader();
-    loadTodos();
+    updateHeader(); loadTodos();
   }
   function goToday() { currentDate = new Date(); updateHeader(); loadTodos(); }
 
@@ -679,16 +664,16 @@
     document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
   function updateHeader() {
-    const d = currentDate;
-    document.getElementById('dayName').textContent = DAYS[d.getDay()];
-    document.getElementById('dateSub').textContent = `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+    document.getElementById('dayName').textContent = DAYS[currentDate.getDay()];
+    document.getElementById('dateSub').textContent = `${MONTHS[currentDate.getMonth()]} ${currentDate.getDate()}`;
     const todayBtn = document.getElementById('todayBtn');
     if (isToday()) todayBtn.classList.add('hidden');
     else todayBtn.classList.remove('hidden');
   }
 
-  const playSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>`;
-  const pauseSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>`;
+  const playSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>`;
+  const pauseSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>`;
+  const clockSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 
   function render() {
     const list = document.getElementById('list');
@@ -741,39 +726,43 @@
     const elapsed = (todo.timeSpent || 0) + (isActive ? getActiveElapsed() : 0);
     const hasCountdown = (todo.countdownSecs || 0) > 0;
     const hasTime = elapsed > 0 || hasCountdown;
-    const isEditing = editingTimerId === todo.id;
+    const showPicker = pickerOpenId === todo.id;
 
-    let displayText = '';
+    let countdownText = '';
     let isWarning = false;
     if (hasCountdown) {
       const remaining = Math.max(0, todo.countdownSecs - elapsed);
-      displayText = fmtTime(remaining);
+      countdownText = fmtTime(remaining);
       if (remaining <= 30 && remaining > 0 && isActive) isWarning = true;
     } else if (elapsed > 0) {
-      displayText = fmtTime(elapsed);
+      countdownText = fmtTime(elapsed);
     }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'todo-wrapper';
+    wrapper.dataset.id = todo.id;
 
     const el = document.createElement('div');
     el.className = 'todo-item' + (todo.done ? ' done' : '') + (isActive ? ' timing' : '');
     el.dataset.id = todo.id;
     if (!todo.done) el.draggable = true;
 
+    // Timer section for pending items
     let timerHTML = '';
     if (!todo.done) {
-      if (isEditing) {
-        timerHTML = `
-          <div class="timer-group">
-            <input class="set-time-input" type="number" min="1" max="999" placeholder="min" autofocus>
-            <button class="timer-btn" title="Cancel">✕</button>
-          </div>`;
-      } else {
-        timerHTML = `
-          <div class="timer-group">
-            <span class="timer-display ${isActive ? 'active' : ''} ${hasTime ? 'has-time' : ''} ${isWarning ? 'countdown-warning' : ''}"
-                  title="Click to set countdown">${displayText}</span>
-            <button class="timer-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>
-          </div>`;
-      }
+      const countdownDisplay = countdownText
+        ? `<span class="timer-countdown ${isActive ? 'active' : ''} ${isWarning ? 'warning' : ''}">${countdownText}</span>`
+        : '';
+
+      const setLabel = hasCountdown ? `${Math.floor(todo.countdownSecs / 60)}m` : '';
+      const setBtnHTML = `<button class="timer-set-btn ${hasCountdown ? 'has-countdown' : ''}">${clockSVG}${setLabel ? `<span>${setLabel}</span>` : ''}</button>`;
+
+      timerHTML = `
+        <div class="timer-inline">
+          ${countdownDisplay}
+          ${setBtnHTML}
+          <button class="timer-play-btn ${isActive ? 'active' : ''}">${isActive ? pauseSVG : playSVG}</button>
+        </div>`;
     } else if (hasTime) {
       timerHTML = `<span class="done-time">${fmtTime(elapsed)}</span>`;
     }
@@ -791,9 +780,10 @@
       ${timerHTML}
       <button class="remove-btn">&times;</button>`;
 
-    // Checkbox
+    // Checkbox click
     el.addEventListener('click', (e) => {
-      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle') || e.target.closest('.timer-btn') || e.target.closest('.timer-display') || e.target.closest('.set-time-input')) return;
+      if (e.target.closest('.remove-btn') || e.target.closest('.drag-handle')
+        || e.target.closest('.timer-play-btn') || e.target.closest('.timer-set-btn')) return;
       toggleTodo(todo.id);
     });
 
@@ -802,51 +792,58 @@
       removeTodo(todo.id);
     });
 
-    // Timer display click → open set countdown input
-    const timerDisp = el.querySelector('.timer-display');
-    if (timerDisp && !todo.done) {
-      timerDisp.addEventListener('click', (e) => {
+    // Set timer button → toggle picker
+    const setBtn = el.querySelector('.timer-set-btn');
+    if (setBtn) {
+      setBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (isActive) return; // don't edit while running
-        editingTimerId = todo.id;
+        if (isActive) return;
+        pickerOpenId = showPicker ? null : todo.id;
         render();
       });
     }
 
-    // Editing mode
-    if (isEditing) {
-      const inp = el.querySelector('.set-time-input');
-      const cancelBtn = el.querySelector('.timer-btn');
-
-      inp.addEventListener('keydown', (e) => {
+    // Play/pause
+    const playBtn = el.querySelector('.timer-play-btn');
+    if (playBtn) {
+      playBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (e.key === 'Enter') {
-          const mins = parseInt(inp.value);
-          if (mins > 0) setCountdown(todo.id, mins);
-          else { editingTimerId = null; render(); }
-        }
-        if (e.key === 'Escape') { editingTimerId = null; render(); }
+        toggleTimer(todo.id);
       });
-      inp.addEventListener('click', (e) => e.stopPropagation());
-
-      cancelBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (hasCountdown) clearCountdown(todo.id);
-        else { editingTimerId = null; render(); }
-      });
-
-      setTimeout(() => inp.focus(), 10);
     }
 
-    // Play/pause
-    if (!isEditing) {
-      const timerBtn = el.querySelector('.timer-btn');
-      if (timerBtn && !todo.done) {
-        timerBtn.addEventListener('click', (e) => {
+    wrapper.appendChild(el);
+
+    // Preset picker panel
+    if (showPicker && !todo.done) {
+      const picker = document.createElement('div');
+      picker.className = 'timer-picker';
+
+      const presets = [5, 10, 15, 20, 25, 30, 45, 60];
+      const currentMins = hasCountdown ? Math.floor(todo.countdownSecs / 60) : 0;
+
+      picker.innerHTML = `
+        <span class="timer-picker-label">Set</span>
+        ${presets.map(m =>
+          `<button class="preset-btn ${currentMins === m ? 'selected' : ''}">${m >= 60 ? `${m/60}h` : `${m}m`}</button>`
+        ).join('')}
+        ${hasCountdown ? '<button class="preset-cancel">Clear</button>' : '<button class="preset-cancel">Cancel</button>'}
+      `;
+
+      picker.querySelectorAll('.preset-btn').forEach((btn, i) => {
+        btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          toggleTimer(todo.id);
+          setCountdown(todo.id, presets[i]);
         });
-      }
+      });
+
+      picker.querySelector('.preset-cancel').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (hasCountdown) clearCountdown(todo.id);
+        else { pickerOpenId = null; render(); }
+      });
+
+      wrapper.appendChild(picker);
     }
 
     // Drag
@@ -877,12 +874,11 @@
         if (e.clientY >= rect.top + rect.height / 2) insertAt++;
         todos.splice(insertAt, 0, item);
         todos.forEach((t, i) => t.position = i);
-        dragSrcId = null;
-        render(); savePositions();
+        dragSrcId = null; render(); savePositions();
       });
     }
 
-    return el;
+    return wrapper;
   }
 
   function clearDragStyles() {
@@ -892,8 +888,7 @@
 
   function escHtml(s) {
     const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+    d.textContent = s; return d.innerHTML;
   }
 
   function handleAdd() {
@@ -901,8 +896,7 @@
     const text = input.value.trim();
     if (!text) return;
     addTodoItem(text);
-    input.value = '';
-    input.focus();
+    input.value = ''; input.focus();
   }
 
   updateClock(); updateHeader(); loadTodos();
